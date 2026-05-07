@@ -1,9 +1,4 @@
-/* ═══════════════════════════════════════════════════════════════
-   BookXchange — Design System
-   Aesthetic: Modern Clean
-   Fonts: Inter (display + body) + DM Sans (body alt)
-   ═══════════════════════════════════════════════════════════════ */
-
+/* ── 1. Design Tokens ────────────────────────────────────────── */
 :root {
     /* Brand */
     --be-primary:        #6366f1;
@@ -50,7 +45,7 @@
     --ease-out:          cubic-bezier(0, 0, 0.2, 1);
 }
 
-/* ── Reset & Base ────────────────────────────────────────── */
+/* ── 2. Reset & Base ─────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
@@ -68,7 +63,6 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* ── Typography ──────────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
     font-family: var(--font-display);
@@ -78,7 +72,6 @@ h1, h2, h3, h4, h5, h6,
     letter-spacing: -0.02em;
 }
 
-/* ── Scrollbar ───────────────────────────────────────────── */
 ::-webkit-scrollbar              { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track        { background: var(--be-cream); }
 ::-webkit-scrollbar-thumb        { background: var(--be-primary-light); border-radius: 3px; }
@@ -86,7 +79,16 @@ h1, h2, h3, h4, h5, h6,
 
 ::selection { background: rgba(99, 102, 241, 0.18); color: var(--be-primary-dark); }
 
-/* ── Navbar ─────────────────────────────────────────────── */
+/* ── 3. Layout ───────────────────────────────────────────────── */
+
+/* 3a. Wrapper */
+.be-wrapper {
+    display: flex;
+    flex: 1 0 auto;
+    min-height: calc(100dvh - var(--navbar-h));
+}
+
+/* 3b. Navbar */
 .be-navbar {
     background: #0f172a;
     box-shadow: 0 1px 0 rgba(99, 102, 241, 0.15), 0 4px 24px rgba(0,0,0,0.2);
@@ -137,7 +139,6 @@ h1, h2, h3, h4, h5, h6,
     margin-left: auto;
 }
 
-/* Hide brand text on small screens so search fits on one row */
 @media (max-width: 767.98px) {
     .be-brand-text { display: none; }
 }
@@ -195,7 +196,6 @@ h1, h2, h3, h4, h5, h6,
 
 .be-navbar .navbar-text strong { color: #fff; font-weight: 600; }
 
-/* Navbar badge (role) */
 .be-navbar .badge.bg-secondary {
     background: rgba(99, 102, 241, 0.25) !important;
     color: var(--be-primary-light);
@@ -229,14 +229,7 @@ h1, h2, h3, h4, h5, h6,
 
 .be-navbar .navbar-toggler:focus { box-shadow: none; }
 
-/* ── Wrapper ─────────────────────────────────────────────── */
-.be-wrapper {
-    display: flex;
-    flex: 1 0 auto;
-    min-height: calc(100dvh - var(--navbar-h));
-}
-
-/* ── Sidebar ─────────────────────────────────────────────── */
+/* 3c. Sidebar */
 .be-sidebar {
     --bs-offcanvas-bg: #1e1b4b;
     background-color: #1e1b4b !important;
@@ -262,7 +255,6 @@ h1, h2, h3, h4, h5, h6,
     .be-main { width: 100%; }
 }
 
-/* Offcanvas header (mobile) */
 .be-sidebar .offcanvas-header {
     padding: 1.1rem 1.25rem;
     border-bottom-color: rgba(255,255,255,0.08) !important;
@@ -282,7 +274,6 @@ h1, h2, h3, h4, h5, h6,
 
 .be-sidebar .btn-close:hover { opacity: 1; }
 
-/* Sidebar sections */
 .sidebar-heading {
     font-size: 0.6rem;
     letter-spacing: 0.16em;
@@ -291,6 +282,12 @@ h1, h2, h3, h4, h5, h6,
     margin-bottom: 0.3rem;
     color: rgba(255,255,255,0.3) !important;
     font-weight: 600;
+}
+
+.sidebar-heading:not(:first-child) {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .sidebar-link {
@@ -322,14 +319,6 @@ h1, h2, h3, h4, h5, h6,
     font-weight: 500;
 }
 
-/* Sidebar divider between sections */
-.sidebar-heading:not(:first-child) {
-    margin-top: 1.5rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-/* Sidebar auth footer */
 .be-sidebar-user {
     display: flex;
     align-items: center;
@@ -390,7 +379,7 @@ h1, h2, h3, h4, h5, h6,
     border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-/* ── Main Content ─────────────────────────────────────────── */
+/* 3d. Main */
 .be-main {
     flex-grow: 1;
     padding: 2.25rem 2.75rem;
@@ -404,58 +393,35 @@ h1, h2, h3, h4, h5, h6,
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Page Header ──────────────────────────────────────────── */
-.page-header {
-    border-bottom: none;
-    padding-bottom: 1rem;
-    margin-bottom: 2rem;
-    position: relative;
+/* 3e. Footer */
+.be-footer {
+    flex-shrink: 0;
+    background: #0f172a;
+    color: rgba(255, 255, 255, 0.38);
+    font-size: 0.8rem;
+    padding: 1.35rem 0;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    letter-spacing: 0.01em;
 }
 
-.page-header::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 36px;
-    height: 2.5px;
-    background: linear-gradient(90deg, var(--be-primary), transparent);
-    border-radius: 2px;
+.footer-link {
+    color: rgba(99, 102, 241, 0.8);
+    text-decoration: none;
+    transition: color 0.15s;
 }
 
-.page-header h2 {
-    font-family: var(--font-display);
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--be-text);
-    letter-spacing: -0.03em;
-    line-height: 1.15;
-    margin-bottom: 0;
-}
+.footer-link:hover { color: var(--be-primary-light); }
 
-.page-header h2 i { color: var(--be-primary); }
+/* ── 4. Bootstrap Overrides ──────────────────────────────────── */
 
-/* ── Cards ─────────────────────────────────────────────────── */
+/* 4a. Cards */
 .card {
     border: 1px solid var(--be-border-light) !important;
     border-radius: 12px !important;
     box-shadow: var(--be-shadow-card) !important;
     background: var(--be-white);
     overflow: hidden;
-}
-
-.card.book-card {
-    border: 1px solid var(--be-border-light) !important;
-    border-radius: 12px !important;
-    box-shadow: var(--be-shadow-card) !important;
-    height: 100%;
-    transition: transform 0.28s var(--ease-bounce), box-shadow 0.28s var(--ease-out);
-}
-
-.card.book-card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--be-shadow-raised) !important;
-    border-color: var(--be-border) !important;
 }
 
 .card-title {
@@ -469,7 +435,6 @@ h1, h2, h3, h4, h5, h6,
 
 .card-text { font-size: 0.855rem; color: var(--be-text-muted); }
 
-/* Card header in admin panels */
 .card-header {
     border-bottom: 1px solid var(--be-border-light) !important;
     padding: 0.85rem 1.25rem !important;
@@ -480,47 +445,7 @@ h1, h2, h3, h4, h5, h6,
 
 .card-header.bg-light { background: var(--be-cream) !important; }
 
-/* ── Book Covers ───────────────────────────────────────────── */
-.book-cover {
-    height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3.2rem;
-    color: rgba(255, 255, 255, 0.5);
-    position: relative;
-    overflow: hidden;
-}
-
-.book-cover::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 55%);
-    pointer-events: none;
-}
-
-.book-cover::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    background: linear-gradient(to top, rgba(0,0,0,0.2), transparent);
-    pointer-events: none;
-}
-
-.book-cover i { position: relative; z-index: 1; }
-
-.cover-1 { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); }
-.cover-2 { background: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%); }
-.cover-3 { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); }
-.cover-4 { background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); }
-.cover-5 { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
-.cover-6 { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-
-/* ── Buttons ────────────────────────────────────────────────── */
+/* 4b. Buttons */
 .btn {
     font-family: var(--font-body);
     font-weight: 500;
@@ -529,37 +454,6 @@ h1, h2, h3, h4, h5, h6,
     border-radius: 8px;
     transition: all 0.2s var(--ease-out);
     position: relative;
-}
-
-.btn-be {
-    background: var(--be-primary);
-    border: none;
-    color: #fff;
-    padding: 0.5rem 1.25rem;
-    box-shadow: 0 1px 3px rgba(79, 70, 229, 0.25);
-}
-
-.btn-be:hover {
-    background: var(--be-primary-dark);
-    color: #fff;
-    transform: translateY(-1px);
-    box-shadow: var(--be-shadow-green);
-}
-
-.btn-be:active { transform: translateY(0); }
-
-.btn-be-outline {
-    border: 1.5px solid var(--be-primary);
-    color: var(--be-primary);
-    background: transparent;
-    padding: 0.5rem 1.25rem;
-}
-
-.btn-be-outline:hover {
-    background: var(--be-primary);
-    border-color: var(--be-primary);
-    color: #fff;
-    transform: translateY(-1px);
 }
 
 .btn-outline-primary {
@@ -594,7 +488,7 @@ h1, h2, h3, h4, h5, h6,
     color: #fff !important;
 }
 
-/* ── Forms ───────────────────────────────────────────────── */
+/* 4c. Forms */
 .form-control,
 .form-select {
     font-family: var(--font-body);
@@ -645,7 +539,7 @@ h1, h2, h3, h4, h5, h6,
     color: #dc2626;
 }
 
-/* ── Badges ──────────────────────────────────────────────── */
+/* 4d. Badges */
 .badge {
     font-family: var(--font-body);
     font-size: 0.68rem;
@@ -666,7 +560,7 @@ h1, h2, h3, h4, h5, h6,
 .bg-warning  { background: #fef9c3 !important; color: #a16207 !important; }
 .bg-danger   { background: #fee2e2 !important; color: #991b1b !important; }
 
-/* ── Alerts ──────────────────────────────────────────────── */
+/* 4e. Alerts */
 .alert {
     border-radius: 10px;
     border: none;
@@ -690,32 +584,7 @@ h1, h2, h3, h4, h5, h6,
 .btn-close { opacity: 0.5; transition: opacity 0.15s; }
 .btn-close:hover { opacity: 0.9; }
 
-/* ── Auth Cards ──────────────────────────────────────────── */
-.auth-card {
-    max-width: 440px;
-    margin: 3rem auto;
-    border: 1px solid var(--be-border-light) !important;
-    border-radius: 16px !important;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.04), 0 24px 64px rgba(15,23,42,0.08) !important;
-    overflow: hidden;
-}
-
-.auth-card .card-header {
-    background: #0f172a !important;
-    color: #fff !important;
-    font-family: var(--font-display);
-    font-size: 1.25rem;
-    font-weight: 700;
-    padding: 1.4rem 1.75rem !important;
-    border: none !important;
-    letter-spacing: -0.02em;
-}
-
-.auth-card .card-header i { color: var(--be-primary-light); }
-
-.auth-card .card-body { padding: 1.75rem !important; }
-
-/* ── Tables ──────────────────────────────────────────────── */
+/* 4f. Tables */
 .table {
     font-size: 0.885rem;
     color: var(--be-text);
@@ -740,14 +609,13 @@ h1, h2, h3, h4, h5, h6,
     background-color: rgba(99, 102, 241, 0.04) !important;
 }
 
-/* Table-sm for detail pages */
 .table-sm > thead > tr > th,
 .table-sm > tbody > tr > td { padding: 0.45rem 0; }
 
 .table-borderless > tbody > tr > td,
 .table-borderless > tbody > tr > th { border: none; }
 
-/* ── Nav Tabs ────────────────────────────────────────────── */
+/* 4g. Nav Tabs */
 .nav-tabs {
     border-bottom: 1.5px solid var(--be-border);
     gap: 0;
@@ -779,7 +647,6 @@ h1, h2, h3, h4, h5, h6,
     font-weight: 600;
 }
 
-/* Tab badge */
 .nav-tabs .badge.bg-secondary {
     background: rgba(99, 102, 241, 0.1) !important;
     color: var(--be-primary) !important;
@@ -787,7 +654,7 @@ h1, h2, h3, h4, h5, h6,
 
 .nav-tabs .badge.be-badge { background: var(--be-primary) !important; color: #fff !important; }
 
-/* ── Breadcrumb ──────────────────────────────────────────── */
+/* 4h. Breadcrumb */
 .breadcrumb {
     font-size: 0.8rem;
     margin-bottom: 0.3rem;
@@ -807,7 +674,7 @@ h1, h2, h3, h4, h5, h6,
     color: var(--be-text-faint);
 }
 
-/* ── Pagination ──────────────────────────────────────────── */
+/* 4i. Pagination */
 .pagination { gap: 4px; }
 
 .page-link {
@@ -841,7 +708,7 @@ h1, h2, h3, h4, h5, h6,
     border-color: var(--be-border-light);
 }
 
-/* ── Modals ──────────────────────────────────────────────── */
+/* 4j. Modals */
 .modal-content {
     border: 1px solid var(--be-border-light) !important;
     border-radius: 14px !important;
@@ -865,13 +732,157 @@ h1, h2, h3, h4, h5, h6,
 .modal-body   { padding: 1.5rem !important; }
 .modal-footer { padding: 1rem 1.5rem !important; border-top: 1px solid var(--be-border-light) !important; background: var(--be-cream); }
 
-/* ── Profile ─────────────────────────────────────────────── */
+/* ── 5. Custom Components ────────────────────────────────────── */
+
+/* 5a. Page Header */
+.page-header {
+    border-bottom: none;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.page-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 36px;
+    height: 2.5px;
+    background: linear-gradient(90deg, var(--be-primary), transparent);
+    border-radius: 2px;
+}
+
+.page-header h2 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--be-text);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 0;
+}
+
+.page-header h2 i { color: var(--be-primary); }
+
 .page-header .rounded-circle {
     background: linear-gradient(135deg, var(--be-primary) 0%, var(--be-primary-dark) 100%) !important;
     box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35) !important;
 }
 
-/* ── Code (slug) ─────────────────────────────────────────── */
+/* 5b. Book Card */
+.card.book-card {
+    border: 1px solid var(--be-border-light) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--be-shadow-card) !important;
+    height: 100%;
+    transition: transform 0.28s var(--ease-bounce), box-shadow 0.28s var(--ease-out);
+}
+
+.card.book-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--be-shadow-raised) !important;
+    border-color: var(--be-border) !important;
+}
+
+/* 5c. Book Covers */
+.book-cover {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.2rem;
+    color: rgba(255, 255, 255, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.book-cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 55%);
+    pointer-events: none;
+}
+
+.book-cover::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to top, rgba(0,0,0,0.2), transparent);
+    pointer-events: none;
+}
+
+.book-cover i { position: relative; z-index: 1; }
+
+.cover-1 { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); }
+.cover-2 { background: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%); }
+.cover-3 { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); }
+.cover-4 { background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); }
+.cover-5 { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+.cover-6 { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+
+/* 5d. Brand Buttons */
+.btn-be {
+    background: var(--be-primary);
+    border: none;
+    color: #fff;
+    padding: 0.5rem 1.25rem;
+    box-shadow: 0 1px 3px rgba(79, 70, 229, 0.25);
+}
+
+.btn-be:hover {
+    background: var(--be-primary-dark);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: var(--be-shadow-green);
+}
+
+.btn-be:active { transform: translateY(0); }
+
+.btn-be-outline {
+    border: 1.5px solid var(--be-primary);
+    color: var(--be-primary);
+    background: transparent;
+    padding: 0.5rem 1.25rem;
+}
+
+.btn-be-outline:hover {
+    background: var(--be-primary);
+    border-color: var(--be-primary);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+/* 5e. Auth Card */
+.auth-card {
+    max-width: 440px;
+    margin: 3rem auto;
+    border: 1px solid var(--be-border-light) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.04), 0 24px 64px rgba(15,23,42,0.08) !important;
+    overflow: hidden;
+}
+
+.auth-card .card-header {
+    background: #0f172a !important;
+    color: #fff !important;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    padding: 1.4rem 1.75rem !important;
+    border: none !important;
+    letter-spacing: -0.02em;
+}
+
+.auth-card .card-header i { color: var(--be-primary-light); }
+
+.auth-card .card-body { padding: 1.75rem !important; }
+
+/* 5f. Code */
 code {
     font-size: 0.82rem;
     color: var(--be-primary-dark);
@@ -881,27 +892,7 @@ code {
     font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
 }
 
-/* ── Footer ──────────────────────────────────────────────── */
-.be-footer {
-    flex-shrink: 0;
-    background: #0f172a;
-    color: rgba(255, 255, 255, 0.38);
-    font-size: 0.8rem;
-    padding: 1.35rem 0;
-    text-align: center;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    letter-spacing: 0.01em;
-}
-
-.footer-link {
-    color: rgba(99, 102, 241, 0.8);
-    text-decoration: none;
-    transition: color 0.15s;
-}
-
-.footer-link:hover { color: var(--be-primary-light); }
-
-/* ── Utility overrides ─────────────────────────────────────── */
+/* ── 6. Utilities ────────────────────────────────────────────── */
 .text-muted { color: var(--be-text-muted) !important; }
 .fw-semibold { font-weight: 500; }
 .shadow-sm   { box-shadow: var(--be-shadow-card) !important; }
@@ -912,10 +903,9 @@ code {
     font-size: 0.65rem;
 }
 
-/* hr refinement */
 hr { border-color: var(--be-border); opacity: 1; margin: 1.25rem 0; }
 
-/* ── Responsive ──────────────────────────────────────────── */
+/* ── 7. Responsive ───────────────────────────────────────────── */
 @media (max-width: 991.98px) {
     .be-main { padding: 1.5rem 1.25rem; }
     .page-header h2 { font-size: 1.65rem; }
