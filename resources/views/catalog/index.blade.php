@@ -39,7 +39,7 @@
         <div class="card book-card">
             @if($book->cover_image)
                 <img src="{{ Storage::url($book->cover_image) }}"
-                     class="card-img-top" style="height:190px; object-fit:cover;"
+                     class="card-img-top" style="aspect-ratio:1/1; width:100%; object-fit:cover;"
                      alt="{{ $book->title }}">
             @else
                 <div class="book-cover cover-{{ ($book->id % 6) + 1 }}">
