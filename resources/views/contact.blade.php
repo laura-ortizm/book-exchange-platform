@@ -23,7 +23,7 @@
                         <th class="text-muted pe-3">Email</th>
                         <td>
                             <a href="mailto:christofer.nvr@gmail.com">
-                                yensi.shared@gmail.com
+                                christofer.nvr@gmail.com
                             </a>
                         </td>
                     </tr>

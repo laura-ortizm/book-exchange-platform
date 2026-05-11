@@ -18,13 +18,15 @@ class UserSeeder extends Seeder
             ]
         );
 
-        User::firstOrCreate(
-            ['email' => 'alice@example.com'],
-            [
-                'username' => 'alice',
-                'password' => bcrypt('user123'),
-                'role'     => 'user',
-            ]
-        );
+        foreach ([
+            ['username' => 'chrisvega',    'email' => 'chrisvega@ugr.es'],
+            ['username' => 'lauraortiz',   'email' => 'lauraortiz@ugr.es'],
+            ['username' => 'pablosoriano', 'email' => 'pablosoriano@ugr.es'],
+        ] as $data) {
+            User::firstOrCreate(
+                ['email' => $data['email']],
+                array_merge($data, ['password' => bcrypt('user123'), 'role' => 'user'])
+            );
+        }
     }
 }
