@@ -656,7 +656,7 @@ h1, h2, h3, h4, h5, h6,
 
 /* 4h. Breadcrumb */
 .breadcrumb {
-    font-size: 0.8rem;
+    font-size: 1rem;
     margin-bottom: 0.3rem;
 }
 
@@ -891,6 +891,81 @@ code {
     padding: 0.15em 0.45em;
     border-radius: 5px;
     font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+}
+
+/* 5g. Book Detail */
+img.book-detail-cover {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.book-detail-cover-placeholder {
+    width: 100%;
+    aspect-ratio: 3/4;
+}
+
+.book-detail-title {
+    font-family: var(--font-display);
+    font-size: 1.85rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+    color: var(--be-text);
+}
+
+.book-detail-author {
+    font-size: 1.05rem;
+    color: var(--be-primary);
+    font-weight: 500;
+    margin-bottom: 1.75rem;
+}
+
+.book-detail-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--be-border-light);
+    margin-bottom: 1.5rem;
+}
+
+.book-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9rem;
+}
+
+.book-meta-label {
+    width: 90px;
+    flex-shrink: 0;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--be-text-faint);
+}
+
+.book-detail-description {
+    background: var(--be-cream);
+    border-left: 3px solid var(--be-primary-light);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+    color: var(--be-text-muted);
+    line-height: 1.7;
+}
+
+.book-detail-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding: 1.25rem 1.5rem 1.5rem;
+    border-top: 1px solid var(--be-border-light);
+    background: var(--be-cream);
 }
 
 /* ── 6. Utilities ────────────────────────────────────────────── */
