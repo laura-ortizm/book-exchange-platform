@@ -81,8 +81,11 @@
 
 {{-- Pagination --}}
 @if($books->hasPages())
-    <div class="mt-5 d-flex justify-content-center">
+    <div class="mt-5 d-flex flex-column align-items-center gap-2">
         {{ $books->links() }}
+        <small class="text-muted">
+            Showing {{ $books->firstItem() }} to {{ $books->lastItem() }} of {{ $books->total() }} results
+        </small>
     </div>
 @endif
 
