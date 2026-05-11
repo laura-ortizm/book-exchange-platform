@@ -39,7 +39,7 @@ gettype($var);  // "string", "integer", "array", "object", ...
 ```
 app/
   Http/
-    Controllers/     ← request handling logic goes here
+    Controllers/     ← AuthController, CatalogController, ProfileController (add more here)
   Models/            ← Book, User, Exchange, Category, Dispute
   Providers/         ← service registration (rarely touched)
 
@@ -608,13 +608,13 @@ $books = Book::with(['owner', 'category'])
 {{ $books->appends(request()->query())->links() }}
 ```
 
-Configure Bootstrap pagination style in `App\Providers\AppServiceProvider`:
+Configure Bootstrap 5 pagination style in `App\Providers\AppServiceProvider` (already done):
 ```php
 use Illuminate\Pagination\Paginator;
 
 public function boot(): void
 {
-    Paginator::useBootstrap();
+    Paginator::useBootstrapFive();
 }
 ```
 
@@ -813,9 +813,16 @@ config('database.connections.mariadb.host')
 
 ## 21. Artisan — Commands Reference
 
+> **This project uses Laravel Sail.** Prefix every `artisan` command with `./vendor/bin/sail`:
+> ```bash
+> ./vendor/bin/sail artisan migrate
+> ./vendor/bin/sail artisan tinker
+> # etc.
+> ```
+> The examples below use the short form for readability.
+
 ```bash
 # Development
-php artisan serve                         # start local server at :8000
 php artisan tinker                        # interactive REPL (test Eloquent live)
 
 # Code generation

@@ -31,7 +31,7 @@ Browser
 │  ┌─────────────────────┐                 │
 │  │  app  :80           │                 │
 │  │  PHP 8.5 + Apache   │                 │
-│  │  Laravel 11         │◄── your code    │
+│  │  Laravel 13         │◄── your code    │
 │  └────────┬────────────┘    (bind mount) │
 │           │                              │
 │  ┌────────▼────────────┐                 │
@@ -149,7 +149,9 @@ and a sample user. Each teammate runs this once on their own machine —
 | Role | Username | Email | Password |
 |---|---|---|---|
 | Admin | `admin` | admin@bookexchange.local | *(your `ADMIN_SEED_PASSWORD`)* |
-| User | `alice` | alice@example.com | `user123` |
+| User | `chrisvega` | chrisvega@ugr.es | `user123` |
+| User | `lauraortiz` | lauraortiz@ugr.es | `user123` |
+| User | `pablosoriano` | pablosoriano@ugr.es | `user123` |
 
 Regular users can register themselves via `/register`.
 
