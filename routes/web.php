@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -22,7 +23,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout',      [AuthController::class, 'logout'])->name('logout');
     Route::get('/books/create', fn() => view('books.create'))->name('books.create');
-    Route::get('/profile',      fn() => view('profile.index'))->name('profile.index');
+    Route::get('/profile',      [ProfileController::class, 'index'])->name('profile.index');
 });
 
 // Admin routes

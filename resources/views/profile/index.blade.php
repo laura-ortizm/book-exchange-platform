@@ -11,8 +11,8 @@
         <i class="bi bi-person-fill"></i>
     </div>
     <div>
-        <h2 class="mb-0">alice <span class="badge bg-secondary fs-6">user</span></h2>
-        <small class="text-muted">Member since April 2026</small>
+        <h2 class="mb-0">{{ $user->username }} <span class="badge bg-secondary fs-6">{{ $user->role }}</span></h2>
+        <small class="text-muted">Member since {{ $user->created_at->format('F Y') }}</small>
     </div>
     <a class="btn btn-be btn-sm ms-auto" href="{{ route('books.create') }}">
         <i class="bi bi-plus-circle me-1"></i>Publish a Book
@@ -24,13 +24,17 @@
     <li class="nav-item">
         <a class="nav-link active" href="#my-books" data-bs-toggle="tab">
             <i class="bi bi-collection me-1"></i>My Books
-            <span class="badge bg-secondary ms-1">3</span>
+            <span class="badge bg-secondary ms-1">{{ $books->count() }}</span>
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#inbox" data-bs-toggle="tab" id="inbox-tab">
+        <a class="nav-link" href="#inbox" data-bs-toggle="tab">
             <i class="bi bi-inbox me-1"></i>Inbox
-            <span class="badge be-badge ms-1">2</span>
+            @if($incoming->where('status', 'pending')->count())
+                <span class="badge be-badge ms-1">{{ $incoming->where('status', 'pending')->count() }}</span>
+            @else
+                <span class="badge bg-secondary ms-1">{{ $incoming->count() + $outgoing->count() }}</span>
+            @endif
         </a>
     </li>
 </ul>
@@ -39,55 +43,52 @@
 
     {{-- My Books tab --}}
     <div class="tab-pane fade show active" id="my-books">
+        @if($books->isEmpty())
+            <p class="text-muted">You haven't published any books yet.</p>
+        @else
         <div class="table-responsive">
             <table class="table table-hover align-middle">
                 <thead class="table-light">
                     <tr>
                         <th>Book</th>
+                        <th>Category</th>
                         <th>Condition</th>
                         <th>Status</th>
                         <th>Listed</th>
-                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach([
-                        ['The Great Gatsby',    'F. Scott Fitzgerald', 'good', 'available', 'Apr 20, 2026'],
-                        ['Dune',                'Frank Herbert',       'fair', 'pending',   'Apr 21, 2026'],
-                        ['The Hobbit',          'J.R.R. Tolkien',      'good', 'available', 'Apr 22, 2026'],
-                    ] as [$title, $author, $condition, $status, $date])
+                    @foreach($books as $book)
                     <tr>
                         <td>
-                            <div class="fw-semibold">{{ $title }}</div>
-                            <small class="text-muted">{{ $author }}</small>
-                        </td>
-                        <td>
-                            <span class="badge
-                                {{ $condition === 'good' ? 'bg-primary' : '' }}
-                                {{ $condition === 'fair' ? 'bg-warning text-dark' : '' }}
-                            ">{{ ucfirst($condition) }}</span>
-                        </td>
-                        <td>
-                            <span class="badge
-                                {{ $status === 'available' ? 'bg-success' : '' }}
-                                {{ $status === 'pending'   ? 'bg-warning text-dark' : '' }}
-                                {{ $status === 'exchanged' ? 'bg-secondary' : '' }}
-                            ">{{ ucfirst($status) }}</span>
-                        </td>
-                        <td><small class="text-muted">{{ $date }}</small></td>
-                        <td class="text-end">
-                            <a class="btn btn-sm btn-outline-primary me-1" href="#">
-                                <i class="bi bi-pencil"></i>
+                            <a class="fw-semibold text-decoration-none" href="{{ route('books.show', $book) }}">
+                                {{ $book->title }}
                             </a>
-                            <button class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                            <br><small class="text-muted">{{ $book->author }}</small>
                         </td>
+                        <td><small class="text-muted">{{ $book->category->name }}</small></td>
+                        <td>
+                            <span class="badge
+                                {{ $book->condition === 'new'  ? 'bg-primary' : '' }}
+                                {{ $book->condition === 'good' ? 'bg-primary' : '' }}
+                                {{ $book->condition === 'fair' ? 'bg-warning text-dark' : '' }}
+                                {{ $book->condition === 'poor' ? 'bg-danger' : '' }}
+                            ">{{ ucfirst($book->condition) }}</span>
+                        </td>
+                        <td>
+                            <span class="badge
+                                {{ $book->status === 'available' ? 'bg-success' : '' }}
+                                {{ $book->status === 'pending'   ? 'bg-warning text-dark' : '' }}
+                                {{ $book->status === 'exchanged' ? 'bg-secondary' : '' }}
+                            ">{{ ucfirst($book->status) }}</span>
+                        </td>
+                        <td><small class="text-muted">{{ $book->created_at->format('M d, Y') }}</small></td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
+        @endif
     </div>
 
     {{-- Inbox tab --}}
@@ -96,6 +97,9 @@
         <h6 class="text-muted text-uppercase small mb-3">
             <i class="bi bi-arrow-down-left-circle me-1"></i>Incoming Requests
         </h6>
+        @if($incoming->isEmpty())
+            <p class="text-muted mb-4">No incoming requests.</p>
+        @else
         <div class="table-responsive mb-4">
             <table class="table table-hover align-middle">
                 <thead class="table-light">
@@ -103,46 +107,37 @@
                         <th>Book requested</th>
                         <th>From</th>
                         <th>Message</th>
+                        <th>Status</th>
                         <th>Date</th>
-                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($incoming as $exchange)
                     <tr>
-                        <td class="fw-semibold">The Great Gatsby</td>
-                        <td><i class="bi bi-person-circle me-1"></i>bob</td>
-                        <td><small class="text-muted">I'd love to read this classic!</small></td>
-                        <td><small class="text-muted">Apr 23, 2026</small></td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-be me-1">
-                                <i class="bi bi-check-lg"></i> Accept
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-x-lg"></i> Reject
-                            </button>
+                        <td class="fw-semibold">{{ $exchange->book->title }}</td>
+                        <td><i class="bi bi-person-circle me-1"></i>{{ $exchange->requester->username }}</td>
+                        <td><small class="text-muted">{{ $exchange->message ?? '—' }}</small></td>
+                        <td>
+                            <span class="badge
+                                {{ $exchange->status === 'pending'  ? 'bg-warning text-dark' : '' }}
+                                {{ $exchange->status === 'accepted' ? 'bg-success' : '' }}
+                                {{ $exchange->status === 'rejected' ? 'bg-danger' : '' }}
+                            ">{{ ucfirst($exchange->status) }}</span>
                         </td>
+                        <td><small class="text-muted">{{ $exchange->created_at->format('M d, Y') }}</small></td>
                     </tr>
-                    <tr>
-                        <td class="fw-semibold">The Hobbit</td>
-                        <td><i class="bi bi-person-circle me-1"></i>carol</td>
-                        <td><small class="text-muted">Tolkien fan here 🙂</small></td>
-                        <td><small class="text-muted">Apr 24, 2026</small></td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-be me-1">
-                                <i class="bi bi-check-lg"></i> Accept
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-x-lg"></i> Reject
-                            </button>
-                        </td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
+        @endif
 
         <h6 class="text-muted text-uppercase small mb-3">
             <i class="bi bi-arrow-up-right-circle me-1"></i>Outgoing Requests
         </h6>
+        @if($outgoing->isEmpty())
+            <p class="text-muted">You haven't requested any books yet.</p>
+        @else
         <div class="table-responsive">
             <table class="table table-hover align-middle">
                 <thead class="table-light">
@@ -154,15 +149,24 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($outgoing as $exchange)
                     <tr>
-                        <td class="fw-semibold">1984</td>
-                        <td><i class="bi bi-person-circle me-1"></i>dave</td>
-                        <td><span class="badge bg-warning text-dark">Pending</span></td>
-                        <td><small class="text-muted">Apr 22, 2026</small></td>
+                        <td class="fw-semibold">{{ $exchange->book->title }}</td>
+                        <td><i class="bi bi-person-circle me-1"></i>{{ $exchange->owner->username }}</td>
+                        <td>
+                            <span class="badge
+                                {{ $exchange->status === 'pending'  ? 'bg-warning text-dark' : '' }}
+                                {{ $exchange->status === 'accepted' ? 'bg-success' : '' }}
+                                {{ $exchange->status === 'rejected' ? 'bg-danger' : '' }}
+                            ">{{ ucfirst($exchange->status) }}</span>
+                        </td>
+                        <td><small class="text-muted">{{ $exchange->created_at->format('M d, Y') }}</small></td>
                     </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
+        @endif
 
     </div>
 
