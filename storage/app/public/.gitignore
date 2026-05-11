@@ -1,2 +1,8 @@
 *
 !.gitignore
+!covers/
+covers/*
+!covers/*.jpg
+!covers/*.jpeg
+!covers/*.png
+!covers/*.webp

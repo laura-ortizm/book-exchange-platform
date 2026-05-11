@@ -32,6 +32,7 @@ class BookSeeder extends Seeder
                 'description' => 'A bleak and hypnotic novel about the collapse of a collective farm in rural Hungary.',
                 'condition'   => 'good',
                 'category_id' => $fiction->id,
+                'cover_image' => 'covers/satantango.jpeg',
             ],
             [
                 'user_id'     => $chris->id,
@@ -41,6 +42,7 @@ class BookSeeder extends Seeder
                 'description' => 'A visionary novella in which a mysterious figure arrives and upends a community.',
                 'condition'   => 'good',
                 'category_id' => $fiction->id,
+                'cover_image' => 'covers/isaiah.jpeg',
             ],
             [
                 'user_id'     => $chris->id,
@@ -50,6 +52,7 @@ class BookSeeder extends Seeder
                 'description' => 'A human raised by Martians returns to Earth and challenges its culture and values.',
                 'condition'   => 'fair',
                 'category_id' => $scifi->id,
+                'cover_image' => 'covers/stranger.jpeg',
             ],
             [
                 'user_id'     => $chris->id,
@@ -59,6 +62,7 @@ class BookSeeder extends Seeder
                 'description' => 'Camus\'s early novel exploring whether it is possible to die happily.',
                 'condition'   => 'good',
                 'category_id' => $fiction->id,
+                'cover_image' => 'covers/happydeath.jpeg',
             ],
             [
                 'user_id'     => $chris->id,
@@ -68,6 +72,7 @@ class BookSeeder extends Seeder
                 'description' => 'A quiet love triangle that dissolves into mystery and longing.',
                 'condition'   => 'fair',
                 'category_id' => $fiction->id,
+                'cover_image' => 'covers/sputnik.jpeg',
             ],
 
             // lauraortiz's books
