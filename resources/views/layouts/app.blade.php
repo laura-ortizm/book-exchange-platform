@@ -109,10 +109,13 @@
                     <i class="bi bi-person"></i> My Account
                 </p>
                 <a class="sidebar-link {{ request()->routeIs('profile.index') ? 'active' : '' }}"
-                   href="{{ route('profile.index') }}">
+                   href="{{ route('profile.index') }}"
+                   data-profile-tab="my-books">
                     <i class="bi bi-collection"></i> My Books
                 </a>
-                <a class="sidebar-link" href="{{ route('profile.index') }}#inbox">
+                <a class="sidebar-link"
+                   href="{{ route('profile.index') }}#inbox"
+                   data-profile-tab="inbox">
                     <i class="bi bi-inbox"></i> Inbox
                 </a>
                 <a class="sidebar-link {{ request()->routeIs('books.create') ? 'active' : '' }}"

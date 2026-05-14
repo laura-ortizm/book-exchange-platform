@@ -21,6 +21,8 @@ class BookSeeder extends Seeder
         $mystery  = Category::where('slug', 'mystery')->first();
         $nonfic   = Category::where('slug', 'non-fiction')->first();
         $academic = Category::where('slug', 'academic')->first();
+        $selfhelp = Category::where('slug', 'self-help')->first();
+        $historical = Category::where('slug', 'historical')->first();
 
         $books = [
             // chrisvega's books
@@ -126,48 +128,53 @@ class BookSeeder extends Seeder
             // pablosoriano's books
             [
                 'user_id'     => $pablo->id,
-                'title'       => '1984',
-                'author'      => 'George Orwell',
-                'isbn'        => '9780451524935',
-                'description' => 'A dystopian novel about totalitarianism and surveillance.',
+                'title'       => 'The Doctor',
+                'author'      => 'Noah Gordon',
+                'isbn'        => '9788440627209',
+                'description' => 'An epic novel about a gifted healer\'s journey through medieval Europe and Persia in search of medical knowledge, purpose, and identity.',
                 'condition'   => 'good',
-                'category_id' => $fiction->id,
+                'category_id' => $historical->id,
+                'cover_image' => 'covers/the_doctor.jpeg',
             ],
             [
                 'user_id'     => $pablo->id,
-                'title'       => 'The Name of the Wind',
-                'author'      => 'Patrick Rothfuss',
-                'isbn'        => '9780756404741',
-                'description' => 'First book of the Kingkiller Chronicle fantasy series.',
-                'condition'   => 'good',
-                'category_id' => $fantasy->id,
-            ],
-            [
-                'user_id'     => $pablo->id,
-                'title'       => 'Clean Code',
-                'author'      => 'Robert C. Martin',
-                'isbn'        => '9780132350884',
-                'description' => 'A handbook of agile software craftsmanship.',
+                'title'       => 'Shaman',
+                'author'      => 'Noah Gordon',
+                'isbn'        => '9788440644060',
+                'description' => 'Continuation of Rob J. Cole\'s saga.”',
                 'condition'   => 'fair',
-                'category_id' => $academic->id,
+                'category_id' => $historical->id,
+                'cover_image' => 'covers/shaman.jpeg',
             ],
             [
                 'user_id'     => $pablo->id,
-                'title'       => 'The Pragmatic Programmer',
-                'author'      => 'Andrew Hunt & David Thomas',
-                'isbn'        => '9780135957059',
-                'description' => 'Classic advice for software developers on writing better code.',
-                'condition'   => 'good',
-                'category_id' => $academic->id,
+                'title'       => 'Matters of Choice',
+                'author'      => 'Noah Gordon',
+                'isbn'        => '9788422656647',
+                'description' => 'Final chapter of Rob J. Cole\'s saga.',
+                'condition'   => 'new',
+                'category_id' => $historical->id,
+                'cover_image' => 'covers/matters_of_choice.jpeg',
             ],
             [
                 'user_id'     => $pablo->id,
-                'title'       => 'Ender\'s Game',
-                'author'      => 'Orson Scott Card',
-                'isbn'        => '9780812550702',
-                'description' => 'A young prodigy is trained to lead Earth\'s defense against an alien threat.',
-                'condition'   => 'good',
-                'category_id' => $scifi->id,
+                'title'       => 'The Pillars of Earth',
+                'author'      => 'Ken Follett',
+                'isbn'        => '9788401499586',
+                'description' => 'Novel set in medieval England that follows the lives, ambitions, and struggles of people connected by the construction of a great cathedral.',
+                'condition'   => 'fair',
+                'category_id' => $historical->id,
+                'cover_image' => 'covers/pillars_of_earth.jpeg',
+            ],
+            [
+                'user_id'     => $pablo->id,
+                'title'       => 'What\'s Your Dream?',
+                'author'      => 'Simon Squibb',
+                'isbn'        => '9781529935585',
+                'description' => 'An inspiring book that encourages readers to overcome fear, pursue their passions, and build a life around their true ambitions.',
+                'condition'   => 'new',
+                'category_id' => $selfhelp->id,
+                'cover_image' => 'covers/whats_your_dream.jpeg',
             ],
         ];
 

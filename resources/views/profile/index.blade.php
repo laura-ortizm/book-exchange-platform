@@ -173,3 +173,44 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const profilePath = @json(parse_url(route('profile.index'), PHP_URL_PATH));
+    function showProfileTab(tabId, updateUrl = true) {
+        const tabLink = document.querySelector(`a[href="#${tabId}"][data-bs-toggle="tab"]`);
+        if (tabLink) {
+            bootstrap.Tab.getOrCreateInstance(tabLink).show();
+        }
+        document.querySelectorAll('[data-profile-tab]').forEach(link => {
+            link.classList.toggle('active', link.dataset.profileTab === tabId);
+        });
+        if (updateUrl && window.location.pathname === profilePath) {
+            const newUrl = tabId === 'inbox'
+                ? `${profilePath}#inbox`
+                : profilePath;
+            history.pushState(null, '', newUrl);
+        }
+    }
+    if (window.location.pathname === profilePath) {
+        showProfileTab(window.location.hash === '#inbox' ? 'inbox' : 'my-books', false);
+    }
+    document.querySelectorAll('[data-profile-tab]').forEach(link => {
+        link.addEventListener('click', function (event) {
+            const tabId = this.dataset.profileTab;
+            if (window.location.pathname === profilePath) {
+                event.preventDefault();
+                showProfileTab(tabId);
+            }
+        });
+    });
+    document.querySelectorAll('#profileTabs a[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function (event) {
+            const tabId = event.target.getAttribute('href').replace('#', '');
+            showProfileTab(tabId);
+        });
+    });
+});
+</script>
+@endpush

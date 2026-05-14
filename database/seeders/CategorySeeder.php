@@ -18,6 +18,8 @@ class CategorySeeder extends Seeder
             ['name' => 'Romance',         'slug' => 'romance',         'description' => 'Romance novels'],
             ['name' => 'Children',        'slug' => 'children',        'description' => 'Books for children and young adults'],
             ['name' => 'Academic',        'slug' => 'academic',        'description' => 'Textbooks and academic publications'],
+            ['name' => 'Self-Help',       'slug' => 'self-help',       'description' => 'Self-improvement and motivational books'],
+            ['name' => 'Historical',      'slug' => 'historical',      'description' => 'Historical fiction and non-fiction'],
         ];
 
         foreach ($categories as $category) {
