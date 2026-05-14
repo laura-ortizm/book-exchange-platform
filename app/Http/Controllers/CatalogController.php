@@ -16,8 +16,8 @@ class CatalogController extends Controller
         if ($request->filled('q')) {
             $search = $request->q;
             $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('author', 'like', "%{$search}%");
+                $q->whereRaw("title COLLATE utf8mb4_uca1400_ai_ci LIKE ?", ["%{$search}%"])
+                  ->orWhereRaw("author COLLATE utf8mb4_uca1400_ai_ci LIKE ?", ["%{$search}%"]);
             });
         }
 
