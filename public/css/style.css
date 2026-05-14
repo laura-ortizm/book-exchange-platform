@@ -48,7 +48,7 @@
 /* ── 2. Reset & Base ─────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
     font-family: var(--font-body);
@@ -141,6 +141,7 @@ h1, h2, h3, h4, h5, h6,
 
 @media (max-width: 767.98px) {
     .be-brand-text { display: none; }
+    .be-navbar .navbar-brand { display: none; }
 }
 
 .be-navbar .navbar-brand {
@@ -324,8 +325,20 @@ h1, h2, h3, h4, h5, h6,
     align-items: center;
     gap: 0.6rem;
     padding: 0.7rem 0.6rem;
-    margin-top: auto;
     border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.be-sidebar-user-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex: 1;
+    min-width: 0;
+    text-decoration: none;
+}
+
+.be-sidebar-user-link:hover .be-sidebar-username {
+    color: var(--be-primary-light);
 }
 
 .be-sidebar-user-icon {
@@ -989,4 +1002,5 @@ hr { border-color: var(--be-border); opacity: 1; margin: 1.25rem 0; }
 
 @media (max-width: 575.98px) {
     .be-main { padding: 1.25rem 1rem; }
+    .be-navbar .container-fluid { padding-left: 1rem; padding-right: 1rem; }
 }

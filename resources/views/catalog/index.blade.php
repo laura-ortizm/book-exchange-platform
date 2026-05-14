@@ -5,7 +5,12 @@
 @section('content')
 
 <div class="d-flex justify-content-between align-items-center page-header">
-    <h2 class="mb-0"><i class="bi bi-grid-3x3-gap me-2"></i>Book Catalog</h2>
+    <h2 class="mb-0">
+        <i class="bi bi-grid-3x3-gap me-2 d-none d-md-inline"></i>
+        <a href="{{ route('catalog.index') }}" class="d-inline d-md-none text-decoration-none me-2 be-mobile-brand">
+            <i class="bi bi-book-half"></i><span class="be-brand-text ms-1">BookXchange</span>
+        </a>Book Catalog
+    </h2>
     <small class="text-muted">{{ $books->total() }} {{ Str::plural('book', $books->total()) }} found</small>
 </div>
 
