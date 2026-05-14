@@ -896,13 +896,25 @@ code {
 /* 5g. Book Detail */
 img.book-detail-cover {
     width: 100%;
-    height: auto;
+    height: 100%;
+    min-height: 420px;
     display: block;
+    object-fit: cover;
 }
 
 .book-detail-cover-placeholder {
     width: 100%;
-    aspect-ratio: 3/4;
+    height: 100%;
+    min-height:420px;
+}
+
+@media (max-width: 767.98px) {
+    img.book-detail-cover,
+    .book-detail-cover-placeholder { 
+        height: auto;
+        min-height: 0;
+        aspect-ratio: 3/4;
+     }
 }
 
 .book-detail-title {

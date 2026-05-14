@@ -12,7 +12,7 @@
 </nav>
 
 <div class="card border-0 shadow-sm overflow-hidden">
-    <div class="row g-0 align-items-start">
+    <div class="row g-0 align-items-stretch">
 
         {{-- Cover column --}}
         <div class="col-md-5 col-lg-4">
