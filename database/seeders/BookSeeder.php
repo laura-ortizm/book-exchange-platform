@@ -23,6 +23,7 @@ class BookSeeder extends Seeder
         $academic = Category::where('slug', 'academic')->first();
         $selfhelp = Category::where('slug', 'self-help')->first();
         $historical = Category::where('slug', 'historical')->first();
+        $romance = Category::where('slug', 'romance')->first();
 
         $books = [
             // chrisvega's books
@@ -79,50 +80,54 @@ class BookSeeder extends Seeder
 
             // lauraortiz's books
             [
-                'user_id'     => $laura->id,
-                'title'       => 'The Hobbit',
-                'author'      => 'J.R.R. Tolkien',
-                'isbn'        => '9780547928227',
-                'description' => 'A fantasy adventure following Bilbo Baggins in Middle-earth.',
-                'condition'   => 'good',
-                'category_id' => $fantasy->id,
+                'user_id'      => $laura->id,
+                'title'        => 'The Picture of Dorian Gray',
+                'author'       => 'Oscar Wilde',
+                'isbn'         => '9780141439570',
+                'description'  => 'A philosophical novel about beauty, youth, vanity, and moral corruption',
+                'condition'    => 'good',
+                'category_id'  => $fiction->id,
+                'cover_image'  => 'covers/doriangray.png',
             ],
             [
-                'user_id'     => $laura->id,
-                'title'       => 'Gone Girl',
-                'author'      => 'Gillian Flynn',
-                'isbn'        => '9780307588371',
-                'description' => 'A psychological thriller about a marriage gone terribly wrong.',
-                'condition'   => 'fair',
-                'category_id' => $mystery->id,
+                'user_id'      => $laura->id,
+                'title'        => 'Gone Girl',
+                'author'       => 'Gillian Flynn',
+                'isbn'         => '9780307588371',
+                'description'  => 'A psychological thriller about a marriage gone terribly wrong.',
+                'condition'    => 'fair',
+                'category_id'  => $mystery->id,
+                'cover_image'  => 'covers/gonegirl.jpg',
             ],
             [
-                'user_id'     => $laura->id,
-                'title'       => 'Neuromancer',
-                'author'      => 'William Gibson',
-                'isbn'        => '9780441569595',
-                'description' => 'The novel that defined the cyberpunk genre.',
-                'condition'   => 'poor',
-                'category_id' => $scifi->id,
-            ],
-
-            [
-                'user_id'     => $laura->id,
-                'title'       => 'Pride and Prejudice',
-                'author'      => 'Jane Austen',
-                'isbn'        => '9780141439518',
-                'description' => 'A witty romantic novel set in early 19th-century England.',
-                'condition'   => 'good',
-                'category_id' => $fiction->id,
+                'user_id'      => $laura->id,
+                'title'        => 'Neuromancer',
+                'author'       => 'William Gibson',
+                'isbn'         => '9780441569595',
+                'description'  => 'The novel that defined the cyberpunk genre.',
+                'condition'    => 'poor',
+                'category_id'  => $scifi->id,
+                'cover_image'  => 'covers/neuromancer.jpg',
             ],
             [
-                'user_id'     => $laura->id,
-                'title'       => 'The Girl with the Dragon Tattoo',
-                'author'      => 'Stieg Larsson',
-                'isbn'        => '9780307949486',
-                'description' => 'A gripping mystery involving a decades-old disappearance in Sweden.',
-                'condition'   => 'fair',
-                'category_id' => $mystery->id,
+                'user_id'      => $laura->id,
+                'title'        => 'Pride and Prejudice',
+                'author'       => 'Jane Austen',
+                'isbn'         => '9780141439518',
+                'description'  => 'A witty romantic novel set in early 19th-century England.',
+                'condition'    => 'good',
+                'category_id'  => $romance->id,
+                'cover_image'  => 'covers/pride_prejudice.jpg',
+            ],
+            [
+                'user_id'      => $laura->id,
+                'title'        => 'The Three-body problem',
+                'author'       => 'Liu Cixin',
+                'isbn'         => '9780765382030',
+                'description'  => 'A science fiction novel about humanity\'s first contact with an alien civilization.',
+                'condition'    => 'new',
+                'category_id'  => $scifi->id,
+                'cover_image'  => 'covers/threebodyproblem.png',
             ],
 
             // pablosoriano's books
