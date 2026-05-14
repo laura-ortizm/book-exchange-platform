@@ -13,7 +13,7 @@
 
 <div class="card shadow-sm border-0">
     <div class="card-body p-4">
-        <form method="POST" action="#" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('books.store') }}" enctype="multipart/form-data">
             @csrf
 
             <div class="row g-3">
@@ -40,14 +40,12 @@
                     <label class="form-label fw-semibold" for="category_id">Category <span class="text-danger">*</span></label>
                     <select class="form-select" id="category_id" name="category_id" required>
                         <option value="">Select a category…</option>
-                        <option>Fiction</option>
-                        <option>Non-Fiction</option>
-                        <option>Science Fiction</option>
-                        <option>Fantasy</option>
-                        <option>Mystery</option>
-                        <option>Romance</option>
-                        <option>Children</option>
-                        <option>Academic</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}"
+                                {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
 
