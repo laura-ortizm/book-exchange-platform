@@ -51,11 +51,11 @@
                     <i class="bi bi-person-plus me-1"></i>Register
                 </a>
             @else
-                <span class="navbar-text">
+                <a href="{{ route('profile.index') }}" class="navbar-text text-decoration-none">
                     <i class="bi bi-person-circle me-1"></i>
                     <strong>{{ auth()->user()->username }}</strong>
                     <span class="badge bg-secondary ms-1">{{ auth()->user()->role }}</span>
-                </span>
+                </a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="btn btn-sm btn-outline-light">
@@ -105,23 +105,15 @@
             @endforeach
 
             @auth
-                <p class="sidebar-heading text-uppercase mt-3">
-                    <i class="bi bi-person"></i> My Account
-                </p>
-                <a class="sidebar-link {{ request()->routeIs('profile.index') ? 'active' : '' }}"
-                   href="{{ route('profile.index') }}"
-                   data-profile-tab="my-books">
-                    <i class="bi bi-collection"></i> My Books
-                </a>
-                <a class="sidebar-link"
-                   href="{{ route('profile.index') }}#inbox"
-                   data-profile-tab="inbox">
-                    <i class="bi bi-inbox"></i> Inbox
-                </a>
-                <a class="sidebar-link {{ request()->routeIs('books.create') ? 'active' : '' }}"
-                   href="{{ route('books.create') }}">
-                    <i class="bi bi-plus-circle"></i> Publish a Book
-                </a>
+                <div class="d-none d-lg-block">
+                    <p class="sidebar-heading text-uppercase mt-3">
+                        <i class="bi bi-person"></i> My Account
+                    </p>
+                    <a class="sidebar-link {{ request()->routeIs('profile.index') ? 'active' : '' }}"
+                       href="{{ route('profile.index') }}">
+                        <i class="bi bi-person-circle"></i> My Profile
+                    </a>
+                </div>
 
                 @if(auth()->user()->isAdmin())
                     <p class="sidebar-heading text-uppercase mt-3">
@@ -139,14 +131,16 @@
             @endauth
 
             {{-- Auth footer — mobile only (desktop uses navbar) --}}
-            <div class="d-lg-none">
+            <div class="d-lg-none mt-auto">
                 @auth
                     <div class="be-sidebar-user">
-                        <i class="bi bi-person-circle be-sidebar-user-icon"></i>
-                        <div class="be-sidebar-user-info">
-                            <div class="be-sidebar-username">{{ auth()->user()->username }}</div>
-                            <div class="be-sidebar-role">{{ auth()->user()->role }}</div>
-                        </div>
+                        <a href="{{ route('profile.index') }}" class="be-sidebar-user-link">
+                            <i class="bi bi-person-circle be-sidebar-user-icon"></i>
+                            <div class="be-sidebar-user-info">
+                                <div class="be-sidebar-username">{{ auth()->user()->username }}</div>
+                                <div class="be-sidebar-role">{{ auth()->user()->role }}</div>
+                            </div>
+                        </a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="be-sidebar-logout" title="Log out">
