@@ -5,6 +5,7 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ExchangeController;
 
 // Public routes
 Route::get('/',        [CatalogController::class, 'index'])->name('catalog.index');
@@ -20,13 +21,20 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
-    Route::post('/logout',       [AuthController::class, 'logout'])->name('logout');
+    Route::post('/logout',      [AuthController::class, 'logout'])->name('logout');
 
-    // IMPORTANT: create has to go before {book} or it causes 404:
-    Route::get('/books/create',  [BookController::class, 'create'])->name('books.create');
-    Route::post('/books',        [BookController::class, 'store'])->name('books.store');
+    // IMPORTANT: create has to go before {book} or it causes 404
+    Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
+    Route::post('/books',       [BookController::class, 'store'])->name('books.store');
 
-    Route::get('/profile',       [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile',      [ProfileController::class, 'index'])->name('profile.index');
+
+    // Exchange routes
+    Route::get('/inbox',                         [ExchangeController::class, 'inbox'])->name('exchanges.inbox');
+    Route::post('/exchanges/{book}',             [ExchangeController::class, 'store'])->name('exchanges.store');
+    Route::post('/exchanges/{exchange}/accept',  [ExchangeController::class, 'accept'])->name('exchanges.accept');
+    Route::post('/exchanges/{exchange}/reject',  [ExchangeController::class, 'reject'])->name('exchanges.reject');
+    Route::post('/exchanges/{exchange}/dispute', [ExchangeController::class, 'dispute'])->name('exchanges.dispute');
 });
 
 // Admin routes

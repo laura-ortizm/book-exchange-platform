@@ -90,15 +90,22 @@
             {{-- Action footer --}}
             <div class="book-detail-actions">
                 @auth
-                    @if(auth()->user()->id !== $book->user_id && $book->status === 'available')
-                        <button class="btn btn-be btn-lg">
+                @if(auth()->user()->id !== $book->user_id && $book->status === 'available')
+                    <form method="POST" action="{{ route('exchanges.store', $book) }}">
+                        @csrf
+                        <div class="mb-3">
+                            <textarea class="form-control" name="message" rows="2"
+                                placeholder="Optional message to the owner..."></textarea>
+                        </div>
+                        <button class="btn btn-be btn-lg" type="submit">
                             <i class="bi bi-arrow-left-right me-2"></i>Request Exchange
                         </button>
-                    @elseif(auth()->user()->id === $book->user_id)
-                        <span class="text-muted fst-italic">
-                            <i class="bi bi-info-circle me-1"></i>This is your book
-                        </span>
-                    @endif
+                    </form>
+                @elseif(auth()->user()->id === $book->user_id)
+                    <span class="text-muted fst-italic">
+                        <i class="bi bi-info-circle me-1"></i>This is your book
+                    </span>
+                @endif
                 @else
                     <a class="btn btn-be btn-lg" href="{{ route('login') }}">
                         <i class="bi bi-box-arrow-in-right me-2"></i>Log in to request exchange
