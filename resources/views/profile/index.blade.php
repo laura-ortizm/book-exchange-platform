@@ -105,6 +105,7 @@
                 <thead class="table-light">
                     <tr>
                         <th>Book requested</th>
+                        <th>Actions</th>
                         <th>From</th>
                         <th>Message</th>
                         <th>Status</th>
@@ -115,6 +116,23 @@
                     @foreach($incoming as $exchange)
                     <tr>
                         <td class="fw-semibold">{{ $exchange->book->title }}</td>
+                        <td>
+                            @if($exchange->status === 'pending')
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a class="btn btn-success btn-sm" href="{{ route('exchanges.choose-book', $exchange) }}">
+                                        <i class="bi bi-check-lg me-1"></i>Accept / Choose Book
+                                    </a>
+                                    <form method="POST" action="{{ route('exchanges.reject', $exchange) }}">
+                                        @csrf
+                                        <button class="btn btn-danger btn-sm" type="submit">
+                                            <i class="bi bi-x-lg me-1"></i>Reject
+                                        </button>
+                                    </form>
+                                </div>
+                            @else
+                                <small class="text-muted">No actions</small>
+                            @endif
+                        </td>
                         <td><i class="bi bi-person-circle me-1"></i>{{ $exchange->requester->username }}</td>
                         <td><small class="text-muted">{{ $exchange->message ?? '—' }}</small></td>
                         <td>

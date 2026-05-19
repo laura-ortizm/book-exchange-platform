@@ -42,12 +42,9 @@
         @if($exchange->status === 'pending')
         <div class="d-flex gap-2 mt-3">
             {{-- Accept --}}
-            <form method="POST" action="{{ route('exchanges.accept', $exchange) }}">
-                @csrf
-                <button class="btn btn-success btn-sm" type="submit">
-                    <i class="bi bi-check-lg me-1"></i>Accept
-                </button>
-            </form>
+            <a class="btn btn-success btn-sm" href="{{ route('exchanges.choose-book', $exchange) }}">
+                <i class="bi bi-check-lg me-1"></i>Accept
+            </a>
 
             {{-- Reject --}}
             <form method="POST" action="{{ route('exchanges.reject', $exchange) }}">
@@ -78,6 +75,13 @@
         </div>
         @endif
 
+        @if($exchange->status === 'accepted' && $exchange->offeredBook)
+            <p class="text-muted small mt-3 mb-0">
+                <i class="bi bi-arrow-left-right me-1"></i>
+                You chose <strong>{{ $exchange->offeredBook->title }}</strong> in exchange.
+            </p>
+        @endif
+
     </div>
 </div>
 @empty
@@ -95,6 +99,12 @@
         <div>
             You requested <strong>{{ $exchange->book->title }}</strong>
             from <strong>{{ $exchange->owner->username }}</strong>
+            @if($exchange->status === 'accepted' && $exchange->offeredBook)
+                <p class="text-muted mt-1 mb-0">
+                    <i class="bi bi-arrow-left-right me-1"></i>
+                    Your book <strong>{{ $exchange->offeredBook->title }}</strong> was chosen.
+                </p>
+            @endif
             @if($exchange->message)
                 <p class="text-muted mt-1 mb-0"><em>"{{ $exchange->message }}"</em></p>
             @endif

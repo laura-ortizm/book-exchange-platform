@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Dispute;
 use App\Models\Exchange;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ExchangeController extends Controller
 {
@@ -13,8 +14,8 @@ class ExchangeController extends Controller
     public function inbox()
     {
         $user     = auth()->user();
-        $incoming = $user->incomingExchanges()->with(['book', 'requester'])->latest()->get();
-        $outgoing = $user->outgoingExchanges()->with(['book', 'owner'])->latest()->get();
+        $incoming = $user->incomingExchanges()->with(['book', 'requester', 'offeredBook'])->latest()->get();
+        $outgoing = $user->outgoingExchanges()->with(['book', 'owner', 'offeredBook'])->latest()->get();
 
         return view('exchanges.inbox', compact('incoming', 'outgoing'));
     }
@@ -56,21 +57,67 @@ class ExchangeController extends Controller
         return back()->with('success', 'Exchange requested successfully!');
     }
 
-    // Accept an exchange request
-    public function accept(Exchange $exchange)
+    // Show requester books so the owner can choose what they want in return
+    public function chooseBook(Exchange $exchange)
+    {
+        if ($exchange->owner_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($exchange->status !== 'pending') {
+            return redirect()->route('exchanges.inbox')
+                ->with('error', 'Only pending exchanges can be accepted.');
+        }
+
+        $exchange->load(['book', 'requester']);
+
+        $requesterBooks = Book::with('category')
+            ->where('user_id', $exchange->requester_id)
+            ->where('status', 'available')
+            ->latest()
+            ->get();
+
+        return view('exchanges.choose-book', compact('exchange', 'requesterBooks'));
+    }
+
+    // Accept an exchange request after choosing the requester's book
+    public function accept(Request $request, Exchange $exchange)
     {
         // Only the book owner can accept
         if ($exchange->owner_id !== auth()->id()) {
             abort(403);
         }
 
-        $exchange->update(['status' => 'accepted']);
+        if ($exchange->status !== 'pending') {
+            return redirect()->route('exchanges.inbox')
+                ->with('error', 'Only pending exchanges can be accepted.');
+        }
 
-        // Delete the book from the platform
-        $exchange->book->delete();
+        $data = $request->validate([
+            'offered_book_id' => ['required', 'exists:books,id'],
+        ]);
+
+        $offeredBook = Book::where('id', $data['offered_book_id'])
+            ->where('user_id', $exchange->requester_id)
+            ->where('status', 'available')
+            ->first();
+
+        if (! $offeredBook) {
+            return back()->with('error', 'Please choose an available book from the requester.');
+        }
+
+        DB::transaction(function () use ($exchange, $offeredBook) {
+            $exchange->update([
+                'offered_book_id' => $offeredBook->id,
+                'status'          => 'accepted',
+            ]);
+
+            $exchange->book->update(['status' => 'exchanged']);
+            $offeredBook->update(['status' => 'exchanged']);
+        });
 
         return redirect()->route('exchanges.inbox')
-            ->with('success', 'Exchange accepted! The book has been removed.');
+            ->with('success', 'Exchange accepted! Both books have been marked as exchanged.');
     }
 
     // Reject an exchange request
@@ -79,6 +126,11 @@ class ExchangeController extends Controller
         // Only the book owner can reject
         if ($exchange->owner_id !== auth()->id()) {
             abort(403);
+        }
+
+        if ($exchange->status !== 'pending') {
+            return redirect()->route('exchanges.inbox')
+                ->with('error', 'Only pending exchanges can be rejected.');
         }
 
         $exchange->update(['status' => 'rejected']);
@@ -90,14 +142,14 @@ class ExchangeController extends Controller
             ->with('success', 'Exchange rejected.');
     }
 
-    // Open a dispute
+    //Open a dispute
     public function dispute(Request $request, Exchange $exchange)
     {
         $data = $request->validate([
             'description' => ['required', 'string', 'max:1000'],
         ]);
 
-        // Check no dispute already exists for this exchange
+        //Check no dispute already exists for this exchange
         if ($exchange->dispute) {
             return back()->with('error', 'A dispute already exists for this exchange.');
         }

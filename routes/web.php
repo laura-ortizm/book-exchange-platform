@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
     // Exchange routes
     Route::get('/inbox',                         [ExchangeController::class, 'inbox'])->name('exchanges.inbox');
     Route::post('/exchanges/{book}',             [ExchangeController::class, 'store'])->name('exchanges.store');
+    Route::get('/exchanges/{exchange}/choose-book', [ExchangeController::class, 'chooseBook'])->name('exchanges.choose-book');
     Route::post('/exchanges/{exchange}/accept',  [ExchangeController::class, 'accept'])->name('exchanges.accept');
     Route::post('/exchanges/{exchange}/reject',  [ExchangeController::class, 'reject'])->name('exchanges.reject');
     Route::post('/exchanges/{exchange}/dispute', [ExchangeController::class, 'dispute'])->name('exchanges.dispute');
