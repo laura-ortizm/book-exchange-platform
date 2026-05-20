@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-#[Fillable(['requester_id', 'book_id', 'offered_book_id', 'owner_id', 'message', 'status'])]
+#[Fillable(['requester_id', 'book_id', 'offered_book_id', 'owner_id', 'message', 'status', 'requester_confirmed_at', 'owner_confirmed_at'])]
 class Exchange extends Model
 {
     public function requester(): BelongsTo
@@ -33,5 +33,13 @@ class Exchange extends Model
     public function dispute(): HasOne
     {
         return $this->hasOne(Dispute::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'requester_confirmed_at' => 'datetime',
+            'owner_confirmed_at'      => 'datetime',
+        ];
     }
 }

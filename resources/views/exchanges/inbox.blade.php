@@ -33,9 +33,11 @@
             </div>
             <span class="badge
                 {{ $exchange->status === 'pending'  ? 'bg-warning text-dark' : '' }}
+                {{ $exchange->status === 'in_progress' ? 'bg-info text-dark' : '' }}
                 {{ $exchange->status === 'accepted' ? 'bg-success' : '' }}
                 {{ $exchange->status === 'rejected' ? 'bg-danger'  : '' }}
-            ">{{ ucfirst($exchange->status) }}</span>
+                {{ $exchange->status === 'cancelled' ? 'bg-secondary' : '' }}
+            ">{{ ucfirst(str_replace('_', ' ', $exchange->status)) }}</span>
         </div>
 
         {{-- Actions only for pending exchanges --}}
@@ -54,31 +56,41 @@
                 </button>
             </form>
 
-            {{-- Dispute --}}
-            <button class="btn btn-outline-secondary btn-sm"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#dispute-{{ $exchange->id }}">
-                <i class="bi bi-flag me-1"></i>Open Dispute
-            </button>
-        </div>
-
-        {{-- Dispute form (hidden until button clicked) --}}
-        <div class="collapse mt-3" id="dispute-{{ $exchange->id }}">
-            <form method="POST" action="{{ route('exchanges.dispute', $exchange) }}">
-                @csrf
-                <textarea class="form-control mb-2" name="description" rows="2"
-                    placeholder="Describe the issue..." required></textarea>
-                <button class="btn btn-warning btn-sm" type="submit">
-                    <i class="bi bi-flag me-1"></i>Submit Dispute
-                </button>
-            </form>
         </div>
         @endif
 
-        @if($exchange->status === 'accepted' && $exchange->offeredBook)
+        @if($exchange->status === 'in_progress' && ! $exchange->dispute)
+        <div class="mt-3">
+            <button class="btn btn-outline-secondary btn-sm"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#dispute-incoming-{{ $exchange->id }}">
+                <i class="bi bi-flag me-1"></i>Open Dispute
+            </button>
+
+            <div class="collapse mt-3" id="dispute-incoming-{{ $exchange->id }}">
+                <form method="POST" action="{{ route('exchanges.dispute', $exchange) }}">
+                    @csrf
+                    <textarea class="form-control mb-2" name="description" rows="2"
+                        placeholder="Describe the issue..." required></textarea>
+                    <button class="btn btn-warning btn-sm" type="submit">
+                        <i class="bi bi-flag me-1"></i>Submit Dispute
+                    </button>
+                </form>
+            </div>
+        </div>
+        @endif
+
+        @if(in_array($exchange->status, ['in_progress', 'accepted'], true) && $exchange->offeredBook)
             <p class="text-muted small mt-3 mb-0">
                 <i class="bi bi-arrow-left-right me-1"></i>
                 You chose <strong>{{ $exchange->offeredBook->title }}</strong> in exchange.
+            </p>
+        @endif
+
+        @if($exchange->dispute)
+            <p class="text-muted small mt-2 mb-0">
+                <i class="bi bi-flag me-1"></i>
+                Dispute status: <strong>{{ ucfirst($exchange->dispute->status) }}</strong>
             </p>
         @endif
 
@@ -95,11 +107,12 @@
 
 @forelse($outgoing as $exchange)
 <div class="card mb-3 shadow-sm border-0">
-    <div class="card-body d-flex justify-content-between align-items-center">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
         <div>
             You requested <strong>{{ $exchange->book->title }}</strong>
             from <strong>{{ $exchange->owner->username }}</strong>
-            @if($exchange->status === 'accepted' && $exchange->offeredBook)
+            @if(in_array($exchange->status, ['in_progress', 'accepted'], true) && $exchange->offeredBook)
                 <p class="text-muted mt-1 mb-0">
                     <i class="bi bi-arrow-left-right me-1"></i>
                     Your book <strong>{{ $exchange->offeredBook->title }}</strong> was chosen.
@@ -111,9 +124,40 @@
         </div>
         <span class="badge
             {{ $exchange->status === 'pending'  ? 'bg-warning text-dark' : '' }}
+            {{ $exchange->status === 'in_progress' ? 'bg-info text-dark' : '' }}
             {{ $exchange->status === 'accepted' ? 'bg-success' : '' }}
             {{ $exchange->status === 'rejected' ? 'bg-danger'  : '' }}
-        ">{{ ucfirst($exchange->status) }}</span>
+            {{ $exchange->status === 'cancelled' ? 'bg-secondary' : '' }}
+        ">{{ ucfirst(str_replace('_', ' ', $exchange->status)) }}</span>
+        </div>
+
+        @if($exchange->status === 'in_progress' && ! $exchange->dispute)
+        <div class="mt-3">
+            <button class="btn btn-outline-secondary btn-sm"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#dispute-outgoing-{{ $exchange->id }}">
+                <i class="bi bi-flag me-1"></i>Open Dispute
+            </button>
+
+            <div class="collapse mt-3" id="dispute-outgoing-{{ $exchange->id }}">
+                <form method="POST" action="{{ route('exchanges.dispute', $exchange) }}">
+                    @csrf
+                    <textarea class="form-control mb-2" name="description" rows="2"
+                        placeholder="Describe the issue..." required></textarea>
+                    <button class="btn btn-warning btn-sm" type="submit">
+                        <i class="bi bi-flag me-1"></i>Submit Dispute
+                    </button>
+                </form>
+            </div>
+        </div>
+        @endif
+
+        @if($exchange->dispute)
+            <p class="text-muted small mt-2 mb-0">
+                <i class="bi bi-flag me-1"></i>
+                Dispute status: <strong>{{ ucfirst($exchange->dispute->status) }}</strong>
+            </p>
+        @endif
     </div>
 </div>
 @empty

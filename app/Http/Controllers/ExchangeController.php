@@ -14,10 +14,22 @@ class ExchangeController extends Controller
     public function inbox()
     {
         $user     = auth()->user();
-        $incoming = $user->incomingExchanges()->with(['book', 'requester', 'offeredBook'])->latest()->get();
-        $outgoing = $user->outgoingExchanges()->with(['book', 'owner', 'offeredBook'])->latest()->get();
+        $incoming = $user->incomingExchanges()->with(['book', 'requester', 'offeredBook', 'dispute'])->latest()->get();
+        $outgoing = $user->outgoingExchanges()->with(['book', 'owner', 'offeredBook', 'dispute'])->latest()->get();
 
         return view('exchanges.inbox', compact('incoming', 'outgoing'));
+    }
+
+    // Show one exchange with its books, users and actions
+    public function show(Exchange $exchange)
+    {
+        if (! in_array(auth()->id(), [$exchange->requester_id, $exchange->owner_id], true)) {
+            abort(403);
+        }
+
+        $exchange->load(['book', 'offeredBook', 'requester', 'owner', 'dispute']);
+
+        return view('exchanges.show', compact('exchange'));
     }
 
     // Store a new exchange request
@@ -109,15 +121,15 @@ class ExchangeController extends Controller
         DB::transaction(function () use ($exchange, $offeredBook) {
             $exchange->update([
                 'offered_book_id' => $offeredBook->id,
-                'status'          => 'accepted',
+                'status'          => 'in_progress',
             ]);
 
-            $exchange->book->update(['status' => 'exchanged']);
-            $offeredBook->update(['status' => 'exchanged']);
+            $exchange->book->update(['status' => 'pending']);
+            $offeredBook->update(['status' => 'pending']);
         });
 
         return redirect()->route('exchanges.inbox')
-            ->with('success', 'Exchange accepted! Both books have been marked as exchanged.');
+            ->with('success', 'Exchange accepted! The exchange is now in progress.');
     }
 
     // Reject an exchange request
@@ -142,9 +154,51 @@ class ExchangeController extends Controller
             ->with('success', 'Exchange rejected.');
     }
 
+    // Mark the current user as satisfied with the exchange
+    public function confirm(Exchange $exchange)
+    {
+        if (! in_array(auth()->id(), [$exchange->requester_id, $exchange->owner_id], true)) {
+            abort(403);
+        }
+
+        if ($exchange->status !== 'in_progress') {
+            return back()->with('error', 'Only exchanges in progress can be confirmed.');
+        }
+
+        DB::transaction(function () use ($exchange) {
+            $exchange->load(['book', 'offeredBook']);
+
+            if (auth()->id() === $exchange->requester_id && ! $exchange->requester_confirmed_at) {
+                $exchange->requester_confirmed_at = now();
+            }
+
+            if (auth()->id() === $exchange->owner_id && ! $exchange->owner_confirmed_at) {
+                $exchange->owner_confirmed_at = now();
+            }
+
+            if ($exchange->requester_confirmed_at && $exchange->owner_confirmed_at && $exchange->offeredBook) {
+                $exchange->status = 'accepted';
+                $exchange->book->update(['status' => 'exchanged']);
+                $exchange->offeredBook->update(['status' => 'exchanged']);
+            }
+
+            $exchange->save();
+        });
+
+        return back()->with('success', 'Your confirmation has been saved.');
+    }
+
     //Open a dispute
     public function dispute(Request $request, Exchange $exchange)
     {
+        if (! in_array(auth()->id(), [$exchange->requester_id, $exchange->owner_id], true)) {
+            abort(403);
+        }
+
+        if ($exchange->status !== 'in_progress') {
+            return back()->with('error', 'Disputes can only be opened for exchanges in progress.');
+        }
+
         $data = $request->validate([
             'description' => ['required', 'string', 'max:1000'],
         ]);
@@ -161,7 +215,6 @@ class ExchangeController extends Controller
             'status'      => 'open',
         ]);
 
-        return redirect()->route('exchanges.inbox')
-            ->with('success', 'Dispute opened. An admin will review it shortly.');
+        return back()->with('success', 'Dispute opened. An admin will review it shortly.');
     }
 }

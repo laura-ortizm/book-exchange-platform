@@ -128,9 +128,14 @@
                                             <i class="bi bi-x-lg me-1"></i>Reject
                                         </button>
                                     </form>
+                                    <a class="btn btn-outline-secondary btn-sm" href="{{ route('exchanges.show', $exchange) }}">
+                                        <i class="bi bi-eye me-1"></i>View Details
+                                    </a>
                                 </div>
                             @else
-                                <small class="text-muted">No actions</small>
+                                <a class="btn btn-outline-secondary btn-sm" href="{{ route('exchanges.show', $exchange) }}">
+                                    <i class="bi bi-eye me-1"></i>View Details
+                                </a>
                             @endif
                         </td>
                         <td><i class="bi bi-person-circle me-1"></i>{{ $exchange->requester->username }}</td>
@@ -138,9 +143,11 @@
                         <td>
                             <span class="badge
                                 {{ $exchange->status === 'pending'  ? 'bg-warning text-dark' : '' }}
+                                {{ $exchange->status === 'in_progress' ? 'bg-info text-dark' : '' }}
                                 {{ $exchange->status === 'accepted' ? 'bg-success' : '' }}
                                 {{ $exchange->status === 'rejected' ? 'bg-danger' : '' }}
-                            ">{{ ucfirst($exchange->status) }}</span>
+                                {{ $exchange->status === 'cancelled' ? 'bg-secondary' : '' }}
+                            ">{{ ucfirst(str_replace('_', ' ', $exchange->status)) }}</span>
                         </td>
                         <td><small class="text-muted">{{ $exchange->created_at->format('M d, Y') }}</small></td>
                     </tr>
@@ -163,6 +170,7 @@
                         <th>Book requested</th>
                         <th>Owner</th>
                         <th>Status</th>
+                        <th>Actions</th>
                         <th>Date</th>
                     </tr>
                 </thead>
@@ -174,9 +182,16 @@
                         <td>
                             <span class="badge
                                 {{ $exchange->status === 'pending'  ? 'bg-warning text-dark' : '' }}
+                                {{ $exchange->status === 'in_progress' ? 'bg-info text-dark' : '' }}
                                 {{ $exchange->status === 'accepted' ? 'bg-success' : '' }}
                                 {{ $exchange->status === 'rejected' ? 'bg-danger' : '' }}
-                            ">{{ ucfirst($exchange->status) }}</span>
+                                {{ $exchange->status === 'cancelled' ? 'bg-secondary' : '' }}
+                            ">{{ ucfirst(str_replace('_', ' ', $exchange->status)) }}</span>
+                        </td>
+                        <td>
+                            <a class="btn btn-outline-secondary btn-sm" href="{{ route('exchanges.show', $exchange) }}">
+                                <i class="bi bi-eye me-1"></i>View Details
+                            </a>
                         </td>
                         <td><small class="text-muted">{{ $exchange->created_at->format('M d, Y') }}</small></td>
                     </tr>

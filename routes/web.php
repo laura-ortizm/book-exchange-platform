@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\ProfileController;
@@ -32,16 +33,20 @@ Route::middleware('auth')->group(function () {
     // Exchange routes
     Route::get('/inbox',                         [ExchangeController::class, 'inbox'])->name('exchanges.inbox');
     Route::post('/exchanges/{book}',             [ExchangeController::class, 'store'])->name('exchanges.store');
+    Route::get('/exchanges/{exchange}',          [ExchangeController::class, 'show'])->name('exchanges.show');
     Route::get('/exchanges/{exchange}/choose-book', [ExchangeController::class, 'chooseBook'])->name('exchanges.choose-book');
     Route::post('/exchanges/{exchange}/accept',  [ExchangeController::class, 'accept'])->name('exchanges.accept');
     Route::post('/exchanges/{exchange}/reject',  [ExchangeController::class, 'reject'])->name('exchanges.reject');
+    Route::post('/exchanges/{exchange}/confirm', [ExchangeController::class, 'confirm'])->name('exchanges.confirm');
     Route::post('/exchanges/{exchange}/dispute', [ExchangeController::class, 'dispute'])->name('exchanges.dispute');
 });
 
 // Admin routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/categories', fn() => view('admin.categories'))->name('categories');
-    Route::get('/disputes',   fn() => view('admin.disputes'))->name('disputes');
+    Route::get('/disputes', [AdminController::class, 'disputes'])->name('disputes');
+    Route::post('/disputes/{dispute}/accept', [AdminController::class, 'acceptDispute'])->name('disputes.accept');
+    Route::post('/disputes/{dispute}/reject', [AdminController::class, 'rejectDispute'])->name('disputes.reject');
 });
 
 // Public book detail — must come LAST so /books/create is matched first
