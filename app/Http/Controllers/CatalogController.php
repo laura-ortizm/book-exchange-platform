@@ -27,7 +27,7 @@ class CatalogController extends Controller
             });
         }
 
-        $books      = $query->latest()->paginate(9)->withQueryString();
+        $books      = $query->orderBy('title')->paginate(9)->withQueryString();
         $categories = Category::orderBy('name')->get();
 
         return view('catalog.index', compact('books', 'categories'));
