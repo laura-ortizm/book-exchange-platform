@@ -181,11 +181,8 @@
                         <td><i class="bi bi-person-circle me-1"></i>{{ $exchange->owner->username }}</td>
                         <td>
                             <span class="badge
-                                {{ $exchange->status === 'pending'  ? 'bg-warning text-dark' : '' }}
-                                {{ $exchange->status === 'in_progress' ? 'bg-info text-dark' : '' }}
-                                {{ $exchange->status === 'accepted' ? 'bg-success' : '' }}
-                                {{ $exchange->status === 'rejected' ? 'bg-danger' : '' }}
-                                {{ $exchange->status === 'cancelled' ? 'bg-secondary' : '' }}
+                                {{ $exchange->status === 'pending'     ? 'bg-warning text-dark' : '' }}
+                                {{ $exchange->status === 'in_progress' ? 'bg-info text-dark'    : '' }}
                             ">{{ ucfirst(str_replace('_', ' ', $exchange->status)) }}</span>
                         </td>
                         <td>
@@ -194,6 +191,54 @@
                             </a>
                         </td>
                         <td><small class="text-muted">{{ $exchange->created_at->format('M d, Y') }}</small></td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        @endif
+
+        <h6 class="text-muted text-uppercase small mb-3 mt-4">
+            <i class="bi bi-check2-circle me-1"></i>Completed Exchanges
+        </h6>
+        @if($completed->isEmpty())
+            <p class="text-muted">No completed exchanges yet.</p>
+        @else
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Book</th>
+                        <th>With</th>
+                        <th>Exchanged for</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($completed as $exchange)
+                    @php $isIncoming = $exchange->owner_id === auth()->id(); @endphp
+                    <tr>
+                        <td class="fw-semibold">{{ $exchange->book->title }}</td>
+                        <td>
+                            <i class="bi bi-person-circle me-1"></i>
+                            {{ $isIncoming ? $exchange->requester->username : $exchange->owner->username }}
+                        </td>
+                        <td>
+                            @if($exchange->offeredBook)
+                                {{ $exchange->offeredBook->title }}
+                            @else
+                                <span class="text-muted">—</span>
+                            @endif
+                        </td>
+                        <td>
+                            <span class="badge
+                                {{ $exchange->status === 'accepted'  ? 'bg-success'   : '' }}
+                                {{ $exchange->status === 'rejected'  ? 'bg-danger'    : '' }}
+                                {{ $exchange->status === 'cancelled' ? 'bg-secondary' : '' }}
+                            ">{{ ucfirst($exchange->status) }}</span>
+                        </td>
+                        <td><small class="text-muted">{{ $exchange->updated_at->format('M d, Y') }}</small></td>
                     </tr>
                     @endforeach
                 </tbody>

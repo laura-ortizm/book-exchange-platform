@@ -17,7 +17,16 @@ class ExchangeController extends Controller
         $incoming = $user->incomingExchanges()->with(['book', 'requester', 'offeredBook', 'dispute'])->latest()->get();
         $outgoing = $user->outgoingExchanges()->with(['book', 'owner', 'offeredBook', 'dispute'])->latest()->get();
 
-        return view('exchanges.inbox', compact('incoming', 'outgoing'));
+        $doneStatuses = ['accepted', 'rejected', 'cancelled'];
+
+        $completed = $incoming->whereIn('status', $doneStatuses)
+                        ->merge($outgoing->whereIn('status', $doneStatuses))
+                        ->sortByDesc('updated_at');
+
+        $incoming = $incoming->whereIn('status', ['pending', 'in_progress']);
+        $outgoing = $outgoing->whereIn('status', ['pending', 'in_progress']);
+
+        return view('exchanges.inbox', compact('incoming', 'outgoing', 'completed'));
     }
 
     // Show one exchange with its books, users and actions

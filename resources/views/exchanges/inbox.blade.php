@@ -8,7 +8,6 @@
     <h2 class="mb-0"><i class="bi bi-inbox me-2"></i>Inbox</h2>
 </div>
 
-
 {{-- INCOMING requests (someone wants your book) --}}
 <h5 class="mb-3">Incoming Requests</h5>
 
@@ -25,30 +24,22 @@
                 @endif
             </div>
             <span class="badge
-                {{ $exchange->status === 'pending'  ? 'bg-warning text-dark' : '' }}
-                {{ $exchange->status === 'in_progress' ? 'bg-info text-dark' : '' }}
-                {{ $exchange->status === 'accepted' ? 'bg-success' : '' }}
-                {{ $exchange->status === 'rejected' ? 'bg-danger'  : '' }}
-                {{ $exchange->status === 'cancelled' ? 'bg-secondary' : '' }}
+                {{ $exchange->status === 'pending'     ? 'bg-warning text-dark' : '' }}
+                {{ $exchange->status === 'in_progress' ? 'bg-info text-dark'    : '' }}
             ">{{ ucfirst(str_replace('_', ' ', $exchange->status)) }}</span>
         </div>
 
-        {{-- Actions only for pending exchanges --}}
         @if($exchange->status === 'pending')
         <div class="d-flex gap-2 mt-3">
-            {{-- Accept --}}
             <a class="btn btn-success btn-sm" href="{{ route('exchanges.choose-book', $exchange) }}">
                 <i class="bi bi-check-lg me-1"></i>Accept
             </a>
-
-            {{-- Reject --}}
             <form method="POST" action="{{ route('exchanges.reject', $exchange) }}">
                 @csrf
                 <button class="btn btn-danger btn-sm" type="submit">
                     <i class="bi bi-x-lg me-1"></i>Reject
                 </button>
             </form>
-
         </div>
         @endif
 
@@ -59,7 +50,6 @@
                     data-bs-target="#dispute-incoming-{{ $exchange->id }}">
                 <i class="bi bi-flag me-1"></i>Open Dispute
             </button>
-
             <div class="collapse mt-3" id="dispute-incoming-{{ $exchange->id }}">
                 <form method="POST" action="{{ route('exchanges.dispute', $exchange) }}">
                     @csrf
@@ -73,7 +63,7 @@
         </div>
         @endif
 
-        @if(in_array($exchange->status, ['in_progress', 'accepted'], true) && $exchange->offeredBook)
+        @if($exchange->status === 'in_progress' && $exchange->offeredBook)
             <p class="text-muted small mt-3 mb-0">
                 <i class="bi bi-arrow-left-right me-1"></i>
                 You chose <strong>{{ $exchange->offeredBook->title }}</strong> in exchange.
@@ -86,11 +76,10 @@
                 Dispute status: <strong>{{ ucfirst($exchange->dispute->status) }}</strong>
             </p>
         @endif
-
     </div>
 </div>
 @empty
-    <p class="text-muted">No incoming requests yet.</p>
+    <p class="text-muted">No incoming requests.</p>
 @endforelse
 
 <hr class="my-4">
@@ -102,26 +91,23 @@
 <div class="card mb-3 shadow-sm border-0">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-start">
-        <div>
-            You requested <strong>{{ $exchange->book->title }}</strong>
-            from <strong>{{ $exchange->owner->username }}</strong>
-            @if(in_array($exchange->status, ['in_progress', 'accepted'], true) && $exchange->offeredBook)
-                <p class="text-muted mt-1 mb-0">
-                    <i class="bi bi-arrow-left-right me-1"></i>
-                    Your book <strong>{{ $exchange->offeredBook->title }}</strong> was chosen.
-                </p>
-            @endif
-            @if($exchange->message)
-                <p class="text-muted mt-1 mb-0"><em>"{{ $exchange->message }}"</em></p>
-            @endif
-        </div>
-        <span class="badge
-            {{ $exchange->status === 'pending'  ? 'bg-warning text-dark' : '' }}
-            {{ $exchange->status === 'in_progress' ? 'bg-info text-dark' : '' }}
-            {{ $exchange->status === 'accepted' ? 'bg-success' : '' }}
-            {{ $exchange->status === 'rejected' ? 'bg-danger'  : '' }}
-            {{ $exchange->status === 'cancelled' ? 'bg-secondary' : '' }}
-        ">{{ ucfirst(str_replace('_', ' ', $exchange->status)) }}</span>
+            <div>
+                You requested <strong>{{ $exchange->book->title }}</strong>
+                from <strong>{{ $exchange->owner->username }}</strong>
+                @if($exchange->status === 'in_progress' && $exchange->offeredBook)
+                    <p class="text-muted mt-1 mb-0">
+                        <i class="bi bi-arrow-left-right me-1"></i>
+                        Your book <strong>{{ $exchange->offeredBook->title }}</strong> was chosen.
+                    </p>
+                @endif
+                @if($exchange->message)
+                    <p class="text-muted mt-1 mb-0"><em>"{{ $exchange->message }}"</em></p>
+                @endif
+            </div>
+            <span class="badge
+                {{ $exchange->status === 'pending'     ? 'bg-warning text-dark' : '' }}
+                {{ $exchange->status === 'in_progress' ? 'bg-info text-dark'    : '' }}
+            ">{{ ucfirst(str_replace('_', ' ', $exchange->status)) }}</span>
         </div>
 
         @if($exchange->status === 'in_progress' && ! $exchange->dispute)
@@ -131,7 +117,6 @@
                     data-bs-target="#dispute-outgoing-{{ $exchange->id }}">
                 <i class="bi bi-flag me-1"></i>Open Dispute
             </button>
-
             <div class="collapse mt-3" id="dispute-outgoing-{{ $exchange->id }}">
                 <form method="POST" action="{{ route('exchanges.dispute', $exchange) }}">
                     @csrf
@@ -155,6 +140,52 @@
 </div>
 @empty
     <p class="text-muted">You haven't requested any books yet.</p>
+@endforelse
+
+<hr class="my-4">
+
+{{-- COMPLETED exchanges --}}
+<h5 class="mb-3">Completed Exchanges</h5>
+
+@forelse($completed as $exchange)
+@php $isIncoming = $exchange->owner_id === auth()->id(); @endphp
+<div class="card mb-3 shadow-sm border-0">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                @if($isIncoming)
+                    <strong>{{ $exchange->requester->username }}</strong>
+                    requested your book
+                    <strong>{{ $exchange->book->title }}</strong>
+                @else
+                    You requested <strong>{{ $exchange->book->title }}</strong>
+                    from <strong>{{ $exchange->owner->username }}</strong>
+                @endif
+
+                @if($exchange->offeredBook)
+                    <p class="text-muted small mt-1 mb-0">
+                        <i class="bi bi-arrow-left-right me-1"></i>
+                        Exchanged for <strong>{{ $exchange->offeredBook->title }}</strong>
+                    </p>
+                @endif
+            </div>
+            <span class="badge
+                {{ $exchange->status === 'accepted'  ? 'bg-success'   : '' }}
+                {{ $exchange->status === 'rejected'  ? 'bg-danger'    : '' }}
+                {{ $exchange->status === 'cancelled' ? 'bg-secondary' : '' }}
+            ">{{ ucfirst($exchange->status) }}</span>
+        </div>
+
+        @if($exchange->dispute)
+            <p class="text-muted small mt-2 mb-0">
+                <i class="bi bi-flag me-1"></i>
+                Dispute: <strong>{{ ucfirst($exchange->dispute->status) }}</strong>
+            </p>
+        @endif
+    </div>
+</div>
+@empty
+    <p class="text-muted">No completed exchanges yet.</p>
 @endforelse
 
 @endsection
