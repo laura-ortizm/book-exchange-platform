@@ -8,13 +8,6 @@
     <h2 class="mb-0"><i class="bi bi-inbox me-2"></i>Inbox</h2>
 </div>
 
-{{-- Success/error messages --}}
-@if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-@endif
-@if(session('error'))
-    <div class="alert alert-danger">{{ session('error') }}</div>
-@endif
 
 {{-- INCOMING requests (someone wants your book) --}}
 <h5 class="mb-3">Incoming Requests</h5>

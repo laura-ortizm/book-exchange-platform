@@ -168,13 +168,13 @@
     {{-- Main content --}}
     <main class="be-main">
         @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+            <div id="flash-alert" class="alert alert-success alert-dismissible fade show mb-4" role="alert">
                 <i class="bi bi-check-circle me-1"></i>{{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
         @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+            <div id="flash-alert" class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
                 <i class="bi bi-exclamation-circle me-1"></i>{{ session('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
@@ -200,6 +200,12 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const flashAlert = document.getElementById('flash-alert');
+    if (flashAlert) {
+        setTimeout(() => bootstrap.Alert.getOrCreateInstance(flashAlert).close(), 4000);
+    }
+</script>
 @stack('scripts')
 </body>
 </html>

@@ -8,9 +8,6 @@
     <h2 class="mb-0"><i class="bi bi-arrow-left-right me-2"></i>Choose a Book</h2>
 </div>
 
-@if(session('error'))
-    <div class="alert alert-danger">{{ session('error') }}</div>
-@endif
 
 <div class="card mb-4">
     <div class="card-body">
