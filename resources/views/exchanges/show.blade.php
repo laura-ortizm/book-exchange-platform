@@ -126,8 +126,8 @@
 </div>
 @endif
 
-<a class="btn btn-be-outline" href="{{ route('profile.index') }}">
-    <i class="bi bi-arrow-left me-1"></i>Back to Profile
+<a class="btn btn-be-outline" href="{{ route('profile.index') }}#inbox">
+    <i class="bi bi-arrow-left me-1"></i>Back to Inbox
 </a>
 
 @endsection

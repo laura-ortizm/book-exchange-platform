@@ -31,7 +31,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile',      [ProfileController::class, 'index'])->name('profile.index');
 
     // Exchange routes
-    Route::get('/inbox',                         [ExchangeController::class, 'inbox'])->name('exchanges.inbox');
     Route::post('/exchanges/{book}',             [ExchangeController::class, 'store'])->name('exchanges.store');
     Route::get('/exchanges/{exchange}',          [ExchangeController::class, 'show'])->name('exchanges.show');
     Route::get('/exchanges/{exchange}/choose-book', [ExchangeController::class, 'chooseBook'])->name('exchanges.choose-book');

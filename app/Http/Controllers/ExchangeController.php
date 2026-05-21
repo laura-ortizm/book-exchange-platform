@@ -10,25 +10,6 @@ use Illuminate\Support\Facades\DB;
 
 class ExchangeController extends Controller
 {
-    // Show the inbox - incoming and outgoing exchanges
-    public function inbox()
-    {
-        $user     = auth()->user();
-        $incoming = $user->incomingExchanges()->with(['book', 'requester', 'offeredBook', 'dispute'])->latest()->get();
-        $outgoing = $user->outgoingExchanges()->with(['book', 'owner', 'offeredBook', 'dispute'])->latest()->get();
-
-        $doneStatuses = ['accepted', 'rejected', 'cancelled'];
-
-        $completed = $incoming->whereIn('status', $doneStatuses)
-                        ->merge($outgoing->whereIn('status', $doneStatuses))
-                        ->sortByDesc('updated_at');
-
-        $incoming = $incoming->whereIn('status', ['pending', 'in_progress']);
-        $outgoing = $outgoing->whereIn('status', ['pending', 'in_progress']);
-
-        return view('exchanges.inbox', compact('incoming', 'outgoing', 'completed'));
-    }
-
     // Show one exchange with its books, users and actions
     public function show(Exchange $exchange)
     {
@@ -83,7 +64,7 @@ class ExchangeController extends Controller
         }
 
         if ($exchange->status !== 'pending') {
-            return redirect()->route('exchanges.inbox')
+            return redirect(route('profile.index') . '#inbox')
                 ->with('error', 'Only pending exchanges can be accepted.');
         }
 
@@ -107,7 +88,7 @@ class ExchangeController extends Controller
         }
 
         if ($exchange->status !== 'pending') {
-            return redirect()->route('exchanges.inbox')
+            return redirect(route('profile.index') . '#inbox')
                 ->with('error', 'Only pending exchanges can be accepted.');
         }
 
@@ -140,7 +121,7 @@ class ExchangeController extends Controller
             $offeredBook->update(['status' => 'pending']);
         });
 
-        return redirect()->route('exchanges.inbox')
+        return redirect(route('profile.index') . '#inbox')
             ->with('success', 'Exchange accepted! The exchange is now in progress.');
     }
 
@@ -153,13 +134,13 @@ class ExchangeController extends Controller
         }
 
         if ($exchange->status !== 'pending') {
-            return redirect()->route('exchanges.inbox')
+            return redirect(route('profile.index') . '#inbox')
                 ->with('error', 'Only pending exchanges can be rejected.');
         }
 
         $exchange->update(['status' => 'rejected']);
 
-        return redirect()->route('exchanges.inbox')
+        return redirect(route('profile.index') . '#inbox')
             ->with('success', 'Exchange rejected.');
     }
 
@@ -189,6 +170,12 @@ class ExchangeController extends Controller
                 $exchange->status = 'accepted';
                 $exchange->book->update(['status' => 'exchanged']);
                 $exchange->offeredBook->update(['status' => 'exchanged']);
+
+                // Both parties agreed — close any open dispute automatically
+                $exchange->load('dispute');
+                if ($exchange->dispute && $exchange->dispute->status === 'open') {
+                    $exchange->dispute->update(['status' => 'resolved']);
+                }
             }
 
             $exchange->save();

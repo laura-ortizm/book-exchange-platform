@@ -63,7 +63,7 @@
 @endforelse
 
 <div class="mt-4 d-flex gap-2">
-    <a class="btn btn-be-outline" href="{{ route('exchanges.inbox') }}">
+    <a class="btn btn-be-outline" href="{{ route('profile.index') }}#inbox">
         <i class="bi bi-arrow-left me-1"></i>Back to Inbox
     </a>
 
