@@ -2,11 +2,62 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Dispute;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
+    public function categories()
+    {
+        $categories = Category::withCount('books')->orderBy('name')->get();
+        return view('admin.categories', compact('categories'));
+    }
+
+    public function storeCategory(Request $request)
+    {
+        $data = $request->validate([
+            'name'        => ['required', 'string', 'max:100', 'unique:categories,name'],
+            'description' => ['required', 'string', 'max:255'],
+        ]);
+
+        Category::create([
+            'name'        => $data['name'],
+            'slug'        => Str::slug($data['name']),
+            'description' => $data['description'],
+        ]);
+
+        return back()->with('success', 'Category "' . $data['name'] . '" created.');
+    }
+
+    public function updateCategory(Request $request, Category $category)
+    {
+        $data = $request->validate([
+            'name'        => ['required', 'string', 'max:100', 'unique:categories,name,' . $category->id],
+            'description' => ['required', 'string', 'max:255'],
+        ]);
+
+        $category->update([
+            'name'        => $data['name'],
+            'slug'        => Str::slug($data['name']),
+            'description' => $data['description'],
+        ]);
+
+        return back()->with('success', 'Category "' . $data['name'] . '" updated.');
+    }
+
+    public function destroyCategory(Category $category)
+    {
+        if ($category->books()->exists()) {
+            return back()->with('error', 'Cannot delete "' . $category->name . '" — it still has books assigned to it.');
+        }
+
+        $category->delete();
+        return back()->with('success', 'Category deleted.');
+    }
+
     public function disputes()
     {
         $disputes = Dispute::with(['exchange.book', 'exchange.offeredBook', 'reporter'])

@@ -42,7 +42,10 @@ Route::middleware('auth')->group(function () {
 
 // Admin routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/categories', fn() => view('admin.categories'))->name('categories');
+    Route::get('/categories',                   [AdminController::class, 'categories'])->name('categories');
+    Route::post('/categories',                  [AdminController::class, 'storeCategory'])->name('categories.store');
+    Route::put('/categories/{category}',        [AdminController::class, 'updateCategory'])->name('categories.update');
+    Route::delete('/categories/{category}',     [AdminController::class, 'destroyCategory'])->name('categories.destroy');
     Route::get('/disputes', [AdminController::class, 'disputes'])->name('disputes');
     Route::post('/disputes/{dispute}/accept', [AdminController::class, 'acceptDispute'])->name('disputes.accept');
     Route::post('/disputes/{dispute}/reject', [AdminController::class, 'rejectDispute'])->name('disputes.reject');

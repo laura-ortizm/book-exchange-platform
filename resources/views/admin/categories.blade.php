@@ -6,7 +6,17 @@
 
 <div class="page-header d-flex align-items-center">
     <h2 class="mb-0"><i class="bi bi-folder2-open me-2"></i>Manage Categories</h2>
+    <span class="badge bg-secondary ms-3 fs-6">{{ $categories->count() }} total</span>
 </div>
+
+{{-- Validation errors (for add/edit forms) --}}
+@if($errors->any())
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-exclamation-circle me-1"></i>
+        {{ $errors->first() }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
 
 {{-- Add category form --}}
 <div class="card shadow-sm border-0 mb-4">
@@ -14,17 +24,19 @@
         <i class="bi bi-plus-circle me-1"></i>Add New Category
     </div>
     <div class="card-body">
-        <form method="POST" action="#" class="row g-3 align-items-end">
+        <form method="POST" action="{{ route('admin.categories.store') }}" class="row g-3 align-items-end">
             @csrf
             <div class="col-md-4">
                 <label class="form-label fw-semibold" for="name">Name <span class="text-danger">*</span></label>
-                <input class="form-control" id="name" name="name" type="text"
-                       placeholder="e.g. Horror" required>
+                <input class="form-control @error('name') is-invalid @enderror"
+                       id="name" name="name" type="text"
+                       placeholder="e.g. Horror" value="{{ old('name') }}" required>
             </div>
             <div class="col-md-6">
                 <label class="form-label fw-semibold" for="description">Description <span class="text-danger">*</span></label>
-                <input class="form-control" id="description" name="description" type="text"
-                       placeholder="Brief description…" required>
+                <input class="form-control @error('description') is-invalid @enderror"
+                       id="description" name="description" type="text"
+                       placeholder="Brief description…" value="{{ old('description') }}" required>
             </div>
             <div class="col-md-2">
                 <button class="btn btn-be w-100" type="submit">
@@ -51,36 +63,69 @@
                     <th class="text-end">Actions</th>
                 </tr>
             </thead>
+            @forelse($categories as $category)
             <tbody>
-                @foreach([
-                    ['Fiction',         'fiction',         'Novels, short stories, and other fictional works', 12],
-                    ['Non-Fiction',     'non-fiction',     'Biographies, history, science, and essays',        7],
-                    ['Science Fiction', 'science-fiction', 'Sci-fi and speculative fiction',                   9],
-                    ['Fantasy',         'fantasy',         'Fantasy and magical realism',                      5],
-                    ['Mystery',         'mystery',         'Mystery, thriller, and crime novels',              4],
-                    ['Romance',         'romance',         'Romance novels',                                   3],
-                    ['Children',        'children',        'Books for children and young adults',              2],
-                    ['Academic',        'academic',        'Textbooks and academic publications',              6],
-                ] as [$name, $slug, $desc, $count])
                 <tr>
-                    <td class="fw-semibold">{{ $name }}</td>
-                    <td><code class="text-muted">{{ $slug }}</code></td>
-                    <td><small class="text-muted">{{ $desc }}</small></td>
+                    <td class="fw-semibold">{{ $category->name }}</td>
+                    <td><code class="text-muted">{{ $category->slug }}</code></td>
+                    <td><small class="text-muted">{{ $category->description }}</small></td>
                     <td class="text-center">
-                        <span class="badge bg-secondary">{{ $count }}</span>
+                        <span class="badge bg-secondary">{{ $category->books_count }}</span>
                     </td>
                     <td class="text-end">
-                        <button class="btn btn-sm btn-outline-primary me-1">
+                        <button class="btn btn-sm btn-outline-primary me-1"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#edit-{{ $category->id }}"
+                                title="Edit">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <button class="btn btn-sm btn-outline-danger"
-                                {{ $count > 0 ? 'disabled title=Cannot delete category with books' : '' }}>
-                            <i class="bi bi-trash"></i>
-                        </button>
+                        <form method="POST" action="{{ route('admin.categories.destroy', $category) }}" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger"
+                                    type="submit"
+                                    title="{{ $category->books_count > 0 ? 'Cannot delete — has books' : 'Delete' }}"
+                                    {{ $category->books_count > 0 ? 'disabled' : '' }}>
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
-                @endforeach
+                <tr class="collapse bg-light" id="edit-{{ $category->id }}">
+                    <td colspan="5" class="py-3 px-4">
+                        <form method="POST" action="{{ route('admin.categories.update', $category) }}"
+                              class="row g-2 align-items-end">
+                            @csrf
+                            @method('PUT')
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold">Name</label>
+                                <input class="form-control form-control-sm" name="name" type="text"
+                                       value="{{ $category->name }}" required maxlength="100">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Description</label>
+                                <input class="form-control form-control-sm" name="description" type="text"
+                                       value="{{ $category->description }}" required maxlength="255">
+                            </div>
+                            <div class="col-md-2 d-flex gap-2">
+                                <button class="btn btn-sm btn-be" type="submit">Save</button>
+                                <button class="btn btn-sm btn-outline-secondary" type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#edit-{{ $category->id }}">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
             </tbody>
+            @empty
+            <tbody>
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">No categories yet.</td>
+                </tr>
+            </tbody>
+            @endforelse
         </table>
     </div>
 </div>
