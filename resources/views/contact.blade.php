@@ -8,23 +8,19 @@
     <h2 class="mb-0"><i class="bi bi-envelope me-2"></i>Contact</h2>
 </div>
 
-<div class="row g-4 justify-content-center">
+<h5 class="fw-semibold mb-3 text-muted">Development Team</h5>
 
-    <div class="col-md-6">
+<div class="row g-4 mb-4">
+
+    <div class="col-md-4">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body p-4">
-                <h5 class="fw-bold mb-3">Developer</h5>
+                <h5 class="fw-bold mb-3">Christofer Vega</h5>
                 <table class="table table-borderless table-sm">
-                    <tr>
-                        <th class="text-muted pe-3">Name</th>
-                        <td>Chris Vega</td>
-                    </tr>
                     <tr>
                         <th class="text-muted pe-3">Email</th>
                         <td>
-                            <a href="mailto:christofer.nvr@gmail.com">
-                                christofer.nvr@gmail.com
-                            </a>
+                            <a href="mailto:christofer.nvr@gmail.com">christofer.nvr@gmail.com</a>
                         </td>
                     </tr>
                     <tr>
@@ -40,18 +36,71 @@
                         <td>2025–2026</td>
                     </tr>
                 </table>
-
-                <hr>
-
-                <a class="btn btn-be" href="{{ asset('como_se_hizo.pdf') }}" target="_blank">
-                    <i class="bi bi-file-pdf me-1"></i>Download Project Report
-                </a>
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="card shadow-sm border-0 h-100">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3">Pablo Soriano</h5>
+                <table class="table table-borderless table-sm">
+                    <tr>
+                        <th class="text-muted pe-3">Email</th>
+                        <td>
+                            <a href="mailto:pablo.soriano@correo.ugr.es">pablo.soriano@correo.ugr.es</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted pe-3">University</th>
+                        <td>Universidad de Granada</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted pe-3">Course</th>
+                        <td>Tecnologías Web</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted pe-3">Year</th>
+                        <td>2025–2026</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3">Laura Ortiz</h5>
+                <table class="table table-borderless table-sm">
+                    <tr>
+                        <th class="text-muted pe-3">Email</th>
+                        <td>
+                            <a href="mailto:laura.ortiz@correo.ugr.es">laura.ortiz@correo.ugr.es</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted pe-3">University</th>
+                        <td>Universidad de Granada</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted pe-3">Course</th>
+                        <td>Tecnologías Web</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted pe-3">Year</th>
+                        <td>2025–2026</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
             <div class="card-body p-4">
                 <h5 class="fw-bold mb-3">About BookXchange</h5>
                 <p class="text-muted">
@@ -66,7 +115,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 @endsection
