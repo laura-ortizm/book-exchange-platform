@@ -39,41 +39,159 @@ gettype($var);  // "string", "integer", "array", "object", ...
 ```
 app/
   Http/
-    Controllers/     ← AuthController, CatalogController, ProfileController (add more here)
-  Models/            ← Book, User, Exchange, Category, Dispute
-  Providers/         ← service registration (rarely touched)
+    Controllers/
+      AuthController.php      ← login, register, logout
+      BookController.php      ← create, store (publish a book)
+      CatalogController.php   ← index (browse + search), show (book detail)
+      ProfileController.php   ← index (my books + inbox tabs)
+      ExchangeController.php  ← store, show, chooseBook, accept, reject, confirm, dispute
+      AdminController.php     ← disputes list, acceptDispute, rejectDispute
+  Models/
+    User.php       ← username, email, role; owns books, has incoming/outgoing exchanges
+    Book.php       ← title, author, isbn, condition, status, cover_image; belongs to User + Category
+    Category.php   ← name, slug; has many Books
+    Exchange.php   ← requester_id, owner_id, book_id, offered_book_id, status, confirmations
+    Dispute.php    ← exchange_id, reporter_id, description, status, resolution, admin_id
+  Providers/       ← service registration (rarely touched)
 
-bootstrap/           ← Laravel boot files (don't touch)
+bootstrap/         ← Laravel boot files (don't touch)
 
-config/              ← app, auth, database, mail, session settings
-  app.php            ← APP_NAME, locale, timezone
-  auth.php           ← auth guards and providers
-  database.php       ← DB connections (reads from .env)
+config/            ← app, auth, database, mail, session settings
+  app.php          ← APP_NAME, locale, timezone
+  auth.php         ← auth guards and providers
+  database.php     ← DB connections (reads from .env)
 
 database/
-  factories/         ← fake data generators for testing
-  migrations/        ← DB schema version control
-  seeders/           ← scripts to populate the DB
+  factories/       ← fake data generators for testing
+  migrations/      ← DB schema version control (one file per change)
+  seeders/         ← scripts to populate the DB with test data
 
-public/              ← web server root (index.php, css, images)
-  css/style.css
+public/            ← web server root (index.php, css, uploaded images)
+  css/style.css    ← all custom styles (no inline styles allowed)
 
 resources/
-  views/             ← Blade templates
-    layouts/app.blade.php   ← main layout
+  views/
+    layouts/app.blade.php         ← shared layout: nav + sidebar + footer
+    catalog/index.blade.php       ← book listing with search + category filter
     books/
-    catalog/
+      create.blade.php            ← publish book form
+      show.blade.php              ← book detail + request exchange form
     auth/
+      login.blade.php
+      register.blade.php
+    profile/index.blade.php       ← "My Books" + "Inbox" tabs (exchanges)
+    exchanges/
+      show.blade.php              ← exchange detail, confirm + dispute actions
+      choose-book.blade.php       ← owner picks which book to receive in return
     admin/
-    profile/
+      categories.blade.php        ← CRUD for book categories
+      disputes.blade.php          ← list and resolve open disputes
+    contact.blade.php
 
 routes/
-  web.php            ← all HTTP routes for the browser
+  web.php          ← all HTTP routes for the browser
 
-.env                 ← environment-specific secrets (never commit!)
-artisan              ← CLI entry point
-composer.json        ← PHP dependencies (like package.json for Node)
+.env               ← environment-specific secrets (never commit!)
+artisan            ← CLI entry point
+composer.json      ← PHP dependencies (like package.json for Node)
 ```
+
+---
+
+## 2a. Database Schema (BookXchange)
+
+Every table has `id` (auto-increment PK), `created_at`, and `updated_at` automatically.
+
+```
+users
+  id, username, email, password, role (enum: user|admin)
+
+categories
+  id, name, slug, description
+
+books
+  id
+  user_id          → users.id   (the owner; cascade delete)
+  category_id      → categories.id (restrict delete — remove books first)
+  title, author, isbn (nullable), description (nullable)
+  condition        enum: new | good | fair | poor
+  cover_image      nullable path string (stored in storage/app/public/covers/)
+  status           enum: available | pending | exchanged
+
+exchanges
+  id
+  requester_id     → users.id   (the user who wants a book)
+  owner_id         → users.id   (the user who owns the book)
+  book_id          → books.id   (the requested book)
+  offered_book_id  → books.id   (the book offered in return; nullable until accepted)
+  message          nullable text (optional note from requester)
+  status           string: pending | in_progress | accepted | rejected | cancelled
+  requester_confirmed_at  nullable timestamp
+  owner_confirmed_at      nullable timestamp
+
+disputes
+  id
+  exchange_id      → exchanges.id  (cascade delete)
+  reporter_id      → users.id      (who opened the dispute)
+  description      text
+  status           enum: open | resolved
+  admin_id         → users.id nullable (who resolved it; null on delete)
+  resolution       nullable text (admin's decision: accepted | rejected)
+```
+
+**Relationships diagram:**
+```
+User ──< Book          (one user owns many books)
+User ──< Exchange      (as requester_id — outgoing)
+User ──< Exchange      (as owner_id    — incoming)
+Book ──< Exchange      (as book_id     — the wanted book)
+Book ──< Exchange      (as offered_book_id — the offered book)
+Exchange ──< Dispute   (one exchange can have one dispute)
+Category ──< Book
+```
+
+---
+
+## 2b. Exchange Status Lifecycle
+
+Understanding this flow is key to the whole app:
+
+```
+[User A requests Book X from User B]
+        ↓
+  exchange.status = pending
+  book.status     = available  ← book stays visible in catalog
+
+[User B rejects]                    [User B accepts + picks a book]
+  exchange → rejected                 exchange → in_progress
+  (book stays available)              book_id.status      → pending
+                                      offered_book.status → pending
+
+                    [Both A and B confirm]
+                      exchange → accepted
+                      book_id.status      → exchanged
+                      offered_book.status → exchanged
+
+  [Either party opens a dispute while in_progress]
+    dispute.status = open
+    (exchange stays in_progress — admin reviews)
+
+    [Admin accepts dispute]             [Admin rejects dispute]
+      exchange → cancelled                exchange → accepted
+      both books → available              both books → exchanged
+      dispute → resolved                  dispute → resolved
+
+    [Both confirm despite open dispute]
+      exchange → accepted
+      dispute → resolved  ← auto-closed
+```
+
+**Book status meanings:**
+| Status | Meaning |
+|--------|---------|
+| `available` | Visible in catalog, can be requested |
+| `pending` | Exchange in progress (both books locked) |
+| `exchanged` | Deal done, removed from catalog permanently |
 
 ---
 
@@ -126,6 +244,35 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 ```blade
 {{ route('books.show', ['id' => $book->id]) }}  {{-- /books/42 --}}
 {{ route('catalog.index', ['category' => 'fiction']) }}  {{-- /catalog?category=fiction --}}
+```
+
+### Actual routes in this project
+
+```
+GET  /                              catalog.index       (public)
+GET  /books/{book}                  books.show          (public)
+GET  /contact                       contact             (public)
+
+GET  /login                         login               (guest only)
+POST /login                         —
+GET  /register                      register            (guest only)
+POST /register                      —
+
+POST /logout                        logout              (auth)
+GET  /books/create                  books.create        (auth)
+POST /books                         books.store         (auth)
+GET  /profile                       profile.index       (auth)
+POST /exchanges/{book}              exchanges.store     (auth) ← request a book
+GET  /exchanges/{exchange}          exchanges.show      (auth)
+GET  /exchanges/{exchange}/choose-book  exchanges.choose-book  (auth)
+POST /exchanges/{exchange}/accept   exchanges.accept    (auth)
+POST /exchanges/{exchange}/reject   exchanges.reject    (auth)
+POST /exchanges/{exchange}/confirm  exchanges.confirm   (auth)
+POST /exchanges/{exchange}/dispute  exchanges.dispute   (auth)
+
+GET  /admin/disputes                admin.disputes      (admin)
+POST /admin/disputes/{dispute}/accept  admin.disputes.accept  (admin)
+POST /admin/disputes/{dispute}/reject  admin.disputes.reject  (admin)
 ```
 
 ---
@@ -219,64 +366,136 @@ public function show(Book $book)
 
 ## 7. Eloquent Models & Relationships
 
+### PHP 8 Attribute syntax (used in this project)
+
+Laravel 11+ supports declaring fillable fields with a PHP 8 attribute instead of a class property:
+
+```php
+// Old way (still works)
+protected $fillable = ['title', 'author', 'status'];
+
+// New way — PHP 8 attribute (used in this project)
+#[Fillable(['title', 'author', 'status'])]
+class Book extends Model { ... }
+```
+
+Both do exactly the same thing. The `#[...]` syntax is a native PHP attribute (annotation).
+
+---
+
+### Querying
+
 ```php
 // ── Fetching ──────────────────────────────────────────────────────
-Book::all();                                    // every row
-Book::find(5);                                  // by PK, null if missing
-Book::findOrFail(5);                            // by PK, 404 if missing
-Book::where('status', 'available')->get();      // filtered collection
-Book::where('status', 'available')->first();    // single row or null
+Book::all();                                       // every row
+Book::find(5);                                     // by PK, null if missing
+Book::findOrFail(5);                               // by PK, 404 if missing
+Book::where('status', 'available')->get();         // filtered collection
+Book::where('status', 'available')->first();       // single row or null
 Book::where('status', 'available')->firstOrFail(); // single row or 404
 
 // ── Chaining conditions ───────────────────────────────────────────
 Book::where('status', 'available')
     ->where('category_id', 3)
-    ->orderBy('created_at', 'desc')
-    ->limit(10)
-    ->get();
+    ->orderBy('title')           // alphabetical — used in CatalogController
+    ->paginate(9);
 
 // ── Search (LIKE) ─────────────────────────────────────────────────
 Book::where('title', 'LIKE', "%{$query}%")
     ->orWhere('author', 'LIKE', "%{$query}%")
     ->get();
 
-// ── Creating ──────────────────────────────────────────────────────
-Book::create(['title' => 'Dune', 'author' => 'Herbert', 'user_id' => 1, ...]);
+// Accent-insensitive search (used in this project for Spanish titles)
+->whereRaw("title COLLATE utf8mb4_uca1400_ai_ci LIKE ?", ["%{$search}%"])
 
-// Via relationship (automatically sets user_id)
+// ── Creating ──────────────────────────────────────────────────────
+Book::create(['title' => 'Dune', 'author' => 'Herbert', 'user_id' => 1]);
+
+// Via relationship (automatically sets the FK)
 auth()->user()->books()->create(['title' => 'Dune', ...]);
 
 // ── Updating ──────────────────────────────────────────────────────
 $book->update(['status' => 'exchanged']);
-Book::where('status', 'pending')->update(['status' => 'available']); // bulk
+Exchange::where('book_id', $id)
+        ->where('status', 'pending')
+        ->update(['status' => 'rejected']); // bulk update — used in accept()
 
 // ── Deleting ──────────────────────────────────────────────────────
 $book->delete();
-Book::destroy(5);      // by PK
-Book::destroy([1,2,3]); // multiple PKs
+Book::destroy(5);
+```
 
-// ── Eager loading (avoids N+1 queries — always use for lists) ────
+### Eager loading (avoids N+1 queries)
+
+```php
+// BAD — fires one DB query per book in the loop (N+1 problem)
+$books = Book::all();
+foreach ($books as $book) {
+    echo $book->owner->username; // query per iteration!
+}
+
+// GOOD — one query for books + one for all owners
 $books = Book::with(['owner', 'category'])->get();
-// Without this, accessing $book->owner in a loop fires one DB query per book
+```
 
-// ── Relationships already in your models ─────────────────────────
-$book->owner;          // User
-$book->category;       // Category
-$book->exchanges;      // Collection<Exchange>
-$exchange->requester;  // User
-$exchange->owner;      // User
-$exchange->book;       // Book
-$exchange->dispute;    // Dispute|null
+Always use `->with([...])` when you'll access relationships in a view.
+
+### Relationships in this project
+
+```php
+// Book model
+$book->owner;           // User — the person who listed it
+$book->category;        // Category
+$book->exchanges;       // Collection<Exchange> — all requests for this book
+
+// Exchange model
+$exchange->requester;   // User — wants the book
+$exchange->owner;       // User — owns the book
+$exchange->book;        // Book — the requested book
+$exchange->offeredBook; // Book|null — what the requester offers in return
+$exchange->dispute;     // Dispute|null
+
+// User model
+$user->books;                // Collection<Book> — books they listed
+$user->incomingExchanges;    // Collection<Exchange> — people wanting their books
+$user->outgoingExchanges;    // Collection<Exchange> — books they requested
+
+// Dispute model
+$dispute->exchange;    // Exchange
+$dispute->reporter;    // User — who opened it
+$dispute->admin;       // User|null — who resolved it
+
+// Category model
 $category->books;      // Collection<Book>
 ```
 
-**Relationship types:**
-| Declaration | Meaning | Example |
+### Casting attributes
+
+The `casts()` method tells Eloquent how to convert column values automatically:
+
+```php
+// Exchange model — timestamps stored as strings in DB, returned as Carbon objects
+protected function casts(): array
+{
+    return [
+        'requester_confirmed_at' => 'datetime',
+        'owner_confirmed_at'     => 'datetime',
+    ];
+}
+
+// Now you can do:
+$exchange->requester_confirmed_at->format('M d, Y');  // Carbon method
+$exchange->requester_confirmed_at ? 'Confirmed' : 'Pending';
+```
+
+### Relationship types reference
+
+| Declaration | Meaning | Used in |
 |---|---|---|
-| `belongsTo(User::class)` | This model has a FK column | Book belongs to User |
-| `hasMany(Exchange::class)` | Other model has a FK to this | Book has many Exchanges |
-| `hasOne(Dispute::class)` | Other model has a FK, only one | Exchange has one Dispute |
-| `belongsToMany(...)` | Join table between two models | (not used yet, but useful for wishlists) |
+| `belongsTo(User::class, 'user_id')` | This model has the FK column | Book → User |
+| `hasMany(Exchange::class, 'owner_id')` | Other model has FK pointing here | User → Exchange |
+| `hasOne(Dispute::class)` | Other model has FK, max one row | Exchange → Dispute |
+| `belongsToMany(...)` | Join table between two models | (not used yet) |
 
 ---
 
