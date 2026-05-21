@@ -45,7 +45,7 @@ app/
       CatalogController.php   ← index (browse + search), show (book detail)
       ProfileController.php   ← index (my books + inbox tabs)
       ExchangeController.php  ← store, show, chooseBook, accept, reject, confirm, dispute
-      AdminController.php     ← disputes list, acceptDispute, rejectDispute
+      AdminController.php     ← categories CRUD, disputes list, acceptDispute, rejectDispute
   Models/
     User.php       ← username, email, role; owns books, has incoming/outgoing exchanges
     Book.php       ← title, author, isbn, condition, status, cover_image; belongs to User + Category
@@ -187,12 +187,12 @@ Understanding this flow is key to the whole app:
 ```
 
 **Book status meanings:**
+
 | Status | Meaning |
 |--------|---------|
 | `available` | Visible in catalog, can be requested |
 | `pending` | Exchange in progress (both books locked) |
 | `exchanged` | Deal done, removed from catalog permanently |
-
 ---
 
 ## 3. MVC Request Flow
@@ -270,9 +270,13 @@ POST /exchanges/{exchange}/reject   exchanges.reject    (auth)
 POST /exchanges/{exchange}/confirm  exchanges.confirm   (auth)
 POST /exchanges/{exchange}/dispute  exchanges.dispute   (auth)
 
-GET  /admin/disputes                admin.disputes      (admin)
-POST /admin/disputes/{dispute}/accept  admin.disputes.accept  (admin)
-POST /admin/disputes/{dispute}/reject  admin.disputes.reject  (admin)
+GET    /admin/categories                  admin.categories         (admin)
+POST   /admin/categories                  admin.categories.store   (admin)
+PUT    /admin/categories/{category}       admin.categories.update  (admin)
+DELETE /admin/categories/{category}       admin.categories.destroy (admin)
+GET    /admin/disputes                    admin.disputes           (admin)
+POST   /admin/disputes/{dispute}/accept   admin.disputes.accept    (admin)
+POST   /admin/disputes/{dispute}/reject   admin.disputes.reject    (admin)
 ```
 
 ---
