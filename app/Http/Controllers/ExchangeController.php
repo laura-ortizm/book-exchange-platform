@@ -63,9 +63,6 @@ class ExchangeController extends Controller
             'status'       => 'pending',
         ]);
 
-        // Mark book as pending so nobody else can request it
-        $book->update(['status' => 'pending']);
-
         return back()->with('success', 'Exchange requested successfully!');
     }
 
@@ -124,6 +121,12 @@ class ExchangeController extends Controller
                 'status'          => 'in_progress',
             ]);
 
+            // Reject all other pending requests for the same book
+            Exchange::where('book_id', $exchange->book_id)
+                ->where('id', '!=', $exchange->id)
+                ->where('status', 'pending')
+                ->update(['status' => 'rejected']);
+
             $exchange->book->update(['status' => 'pending']);
             $offeredBook->update(['status' => 'pending']);
         });
@@ -146,9 +149,6 @@ class ExchangeController extends Controller
         }
 
         $exchange->update(['status' => 'rejected']);
-
-        // Put the book back to available
-        $exchange->book->update(['status' => 'available']);
 
         return redirect()->route('exchanges.inbox')
             ->with('success', 'Exchange rejected.');
