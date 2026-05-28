@@ -55,6 +55,7 @@
                         <th>Condition</th>
                         <th>Status</th>
                         <th>Listed</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,6 +84,21 @@
                             ">{{ ucfirst($book->status) }}</span>
                         </td>
                         <td><small class="text-muted">{{ $book->created_at->format('M d, Y') }}</small></td>
+                        <td>
+                            @unless(
+                                $book->exchanges->whereIn('status', ['pending', 'in_progress'])->isNotEmpty() ||
+                                $book->offeredExchanges->whereIn('status', ['in_progress'])->isNotEmpty()
+                            )
+                            <form method="POST" action="{{ route('books.destroy', $book) }}"
+                                  onsubmit="return confirm('Remove «{{ addslashes($book->title) }}» from the exchange? This cannot be undone.')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash me-1"></i>Remove
+                                </button>
+                            </form>
+                            @endunless
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>

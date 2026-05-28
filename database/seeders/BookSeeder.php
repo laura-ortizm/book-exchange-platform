@@ -6,11 +6,21 @@ use App\Models\Book;
 use App\Models\User;
 use App\Models\Category;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
 
 class BookSeeder extends Seeder
 {
     public function run(): void
     {
+        $source = database_path('seeders/covers');
+        $dest   = storage_path('app/public/covers');
+
+        File::ensureDirectoryExists($dest);
+
+        foreach (File::files($source) as $file) {
+            File::copy($file->getPathname(), $dest . '/' . $file->getFilename());
+        }
+
         $chris  = User::where('username', 'chrisvega')->first();
         $laura  = User::where('username', 'lauraortiz')->first();
         $pablo  = User::where('username', 'pablosoriano')->first();

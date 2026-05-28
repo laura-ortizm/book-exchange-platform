@@ -9,7 +9,7 @@ class ProfileController extends Controller
     public function index()
     {
         $user     = auth()->user();
-        $books    = $user->books()->with('category')->latest()->get();
+        $books    = $user->books()->with(['category', 'exchanges', 'offeredExchanges'])->latest()->get();
 
         $allIncoming = $user->incomingExchanges()->with(['book', 'requester', 'offeredBook'])->latest()->get();
         $allOutgoing = $user->outgoingExchanges()->with(['book', 'owner', 'offeredBook'])->latest()->get();

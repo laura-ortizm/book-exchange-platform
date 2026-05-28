@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\Category;
+use App\Models\Exchange;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
@@ -38,5 +40,29 @@ class BookController extends Controller
 
         return redirect()->route('profile.index')
             ->with('success', 'Book published successfully!');
+    }
+
+    public function destroy(Book $book)
+    {
+        abort_unless($book->user_id === auth()->id(), 403);
+
+        $activeExchanges = Exchange::where(function ($q) use ($book) {
+            $q->where('book_id', $book->id)
+              ->orWhere('offered_book_id', $book->id);
+        })->whereIn('status', ['pending', 'in_progress'])->exists();
+
+        if ($activeExchanges) {
+            return redirect()->route('profile.index')
+                ->with('error', 'Cannot remove a book with active exchange requests.');
+        }
+
+        if ($book->cover_image) {
+            Storage::disk('public')->delete($book->cover_image);
+        }
+
+        $book->delete();
+
+        return redirect()->route('profile.index')
+            ->with('success', 'Book removed successfully.');
     }
 }

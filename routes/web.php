@@ -25,8 +25,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout',      [AuthController::class, 'logout'])->name('logout');
 
     // IMPORTANT: create has to go before {book} or it causes 404
-    Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
-    Route::post('/books',       [BookController::class, 'store'])->name('books.store');
+    Route::get('/books/create',    [BookController::class, 'create'])->name('books.create');
+    Route::post('/books',          [BookController::class, 'store'])->name('books.store');
+    Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
 
     Route::get('/profile',      [ProfileController::class, 'index'])->name('profile.index');
 

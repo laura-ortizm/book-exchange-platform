@@ -24,4 +24,9 @@ class Book extends Model
     {
         return $this->hasMany(Exchange::class);
     }
+
+    public function offeredExchanges(): HasMany
+    {
+        return $this->hasMany(Exchange::class, 'offered_book_id');
+    }
 }
