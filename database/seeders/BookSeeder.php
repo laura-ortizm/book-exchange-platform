@@ -21,9 +21,9 @@ class BookSeeder extends Seeder
             File::copy($file->getPathname(), $dest . '/' . $file->getFilename());
         }
 
-        $chris  = User::where('username', 'chrisvega')->first();
-        $laura  = User::where('username', 'lauraortiz')->first();
-        $pablo  = User::where('username', 'pablosoriano')->first();
+        $alice = User::where('username', 'alice')->first();
+        $bob = User::where('username', 'bob')->first();
+        $charlie = User::where('username', 'charlie')->first();
 
         $fiction  = Category::where('slug', 'fiction')->first();
         $scifi    = Category::where('slug', 'science-fiction')->first();
@@ -36,9 +36,9 @@ class BookSeeder extends Seeder
         $romance = Category::where('slug', 'romance')->first();
 
         $books = [
-            // chrisvega's books
+            // alice's books
             [
-                'user_id'     => $chris->id,
+                'user_id'     => $alice->id,
                 'title'       => 'Sátántangó',
                 'author'      => 'László Krasznahorkai',
                 'isbn'        => '9788416748679',
@@ -48,7 +48,7 @@ class BookSeeder extends Seeder
                 'cover_image' => 'covers/satantango.jpeg',
             ],
             [
-                'user_id'     => $chris->id,
+                'user_id'     => $alice->id,
                 'title'       => 'Isaiah Has Come',
                 'author'      => 'László Krasznahorkai',
                 'isbn'        => '9788492649044',
@@ -58,7 +58,7 @@ class BookSeeder extends Seeder
                 'cover_image' => 'covers/isaiah.jpeg',
             ],
             [
-                'user_id'     => $chris->id,
+                'user_id'     => $alice->id,
                 'title'       => 'Stranger in a Strange Land',
                 'author'      => 'Robert A. Heinlein',
                 'isbn'        => '9780441788385',
@@ -68,7 +68,7 @@ class BookSeeder extends Seeder
                 'cover_image' => 'covers/stranger.jpeg',
             ],
             [
-                'user_id'     => $chris->id,
+                'user_id'     => $alice->id,
                 'title'       => 'A Happy Death',
                 'author'      => 'Albert Camus',
                 'isbn'        => '9788466354967',
@@ -78,7 +78,7 @@ class BookSeeder extends Seeder
                 'cover_image' => 'covers/happydeath.jpeg',
             ],
             [
-                'user_id'     => $chris->id,
+                'user_id'     => $alice->id,
                 'title'       => 'Sputnik Sweetheart',
                 'author'      => 'Haruki Murakami',
                 'isbn'        => '9788483102169',
@@ -88,9 +88,9 @@ class BookSeeder extends Seeder
                 'cover_image' => 'covers/sputnik.jpeg',
             ],
 
-            // lauraortiz's books
+            // bob's books
             [
-                'user_id'      => $laura->id,
+                'user_id'      => $bob->id,
                 'title'        => 'The Picture of Dorian Gray',
                 'author'       => 'Oscar Wilde',
                 'isbn'         => '9780141439570',
@@ -100,7 +100,7 @@ class BookSeeder extends Seeder
                 'cover_image'  => 'covers/doriangray.png',
             ],
             [
-                'user_id'      => $laura->id,
+                'user_id'      => $bob->id,
                 'title'        => 'Gone Girl',
                 'author'       => 'Gillian Flynn',
                 'isbn'         => '9780307588371',
@@ -110,7 +110,7 @@ class BookSeeder extends Seeder
                 'cover_image'  => 'covers/gonegirl.jpg',
             ],
             [
-                'user_id'      => $laura->id,
+                'user_id'      => $bob->id,
                 'title'        => 'Neuromancer',
                 'author'       => 'William Gibson',
                 'isbn'         => '9780441569595',
@@ -120,7 +120,7 @@ class BookSeeder extends Seeder
                 'cover_image'  => 'covers/neuromancer.jpg',
             ],
             [
-                'user_id'      => $laura->id,
+                'user_id'      => $bob->id,
                 'title'        => 'Pride and Prejudice',
                 'author'       => 'Jane Austen',
                 'isbn'         => '9780141439518',
@@ -130,7 +130,7 @@ class BookSeeder extends Seeder
                 'cover_image'  => 'covers/pride_prejudice.jpg',
             ],
             [
-                'user_id'      => $laura->id,
+                'user_id'      => $bob->id,
                 'title'        => 'The Three-body problem',
                 'author'       => 'Liu Cixin',
                 'isbn'         => '9780765382030',
@@ -140,9 +140,9 @@ class BookSeeder extends Seeder
                 'cover_image'  => 'covers/threebodyproblem.png',
             ],
 
-            // pablosoriano's books
+            // charlie's books
             [
-                'user_id'     => $pablo->id,
+                'user_id'     => $charlie->id,
                 'title'       => 'The Doctor',
                 'author'      => 'Noah Gordon',
                 'isbn'        => '9788440627209',
@@ -152,7 +152,7 @@ class BookSeeder extends Seeder
                 'cover_image' => 'covers/the_doctor.jpeg',
             ],
             [
-                'user_id'     => $pablo->id,
+                'user_id'     => $charlie->id,
                 'title'       => 'Shaman',
                 'author'      => 'Noah Gordon',
                 'isbn'        => '9788440644060',
@@ -162,7 +162,7 @@ class BookSeeder extends Seeder
                 'cover_image' => 'covers/shaman.jpeg',
             ],
             [
-                'user_id'     => $pablo->id,
+                'user_id'     => $charlie->id,
                 'title'       => 'Matters of Choice',
                 'author'      => 'Noah Gordon',
                 'isbn'        => '9788422656647',
@@ -172,7 +172,7 @@ class BookSeeder extends Seeder
                 'cover_image' => 'covers/matters_of_choice.jpeg',
             ],
             [
-                'user_id'     => $pablo->id,
+                'user_id'     => $charlie->id,
                 'title'       => 'The Pillars of Earth',
                 'author'      => 'Ken Follett',
                 'isbn'        => '9788401499586',
@@ -182,7 +182,7 @@ class BookSeeder extends Seeder
                 'cover_image' => 'covers/pillars_of_earth.jpeg',
             ],
             [
-                'user_id'     => $pablo->id,
+                'user_id'     => $charlie->id,
                 'title'       => 'What\'s Your Dream?',
                 'author'      => 'Simon Squibb',
                 'isbn'        => '9781529935585',

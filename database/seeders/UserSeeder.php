@@ -19,9 +19,9 @@ class UserSeeder extends Seeder
         );
 
         foreach ([
-            ['username' => 'chrisvega',    'email' => 'chrisvega@ugr.es'],
-            ['username' => 'lauraortiz',   'email' => 'lauraortiz@ugr.es'],
-            ['username' => 'pablosoriano', 'email' => 'pablosoriano@ugr.es'],
+                ['username' => 'alice', 'email' => 'alice@example.test'],
+                ['username' => 'bob', 'email' => 'bob@example.test'],
+                ['username' => 'charlie', 'email' => 'charlie@example.test'],
         ] as $data) {
             User::firstOrCreate(
                 ['email' => $data['email']],

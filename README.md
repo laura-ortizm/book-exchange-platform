@@ -104,7 +104,7 @@ Open `.env` and fill in:
 
 ```
 DB_PASSWORD=          # any password you like for the local MariaDB container
-ADMIN_SEED_PASSWORD=  # password for the dev admin account (e.g. admin123)
+ADMIN_SEED_PASSWORD=  # password for the local development admin account
 ```
 
 > Each teammate sets their own values — `.env` is never committed to git.
@@ -146,14 +146,16 @@ and a sample user. Each teammate runs this once on their own machine —
 
 ### 7. Seed accounts
 
+All seeded accounts are fictional and intended exclusively for local development.
+
 | Role | Username | Email | Password |
 |---|---|---|---|
-| Admin | `admin` | admin@bookexchange.local | *(your `ADMIN_SEED_PASSWORD`)* |
-| User | `chrisvega` | chrisvega@ugr.es | `user123` |
-| User | `lauraortiz` | lauraortiz@ugr.es | `user123` |
-| User | `pablosoriano` | pablosoriano@ugr.es | `user123` |
+| Admin | `admin` | `admin@bookexchange.local` | Your `ADMIN_SEED_PASSWORD` |
+| User | `alice` | `alice@example.test` | `user123` |
+| User | `bob` | `bob@example.test` | `user123` |
+| User | `charlie` | `charlie@example.test` | `user123` |
 
-Regular users can register themselves via `/register`.
+Regular users can also register through `/register`.
 
 ## Project structure
 
